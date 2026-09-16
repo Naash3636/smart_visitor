@@ -1,1 +1,1 @@
-window.API_URL = "https://warrant-identifier-weekly-edinburgh.trycloudflare.com";
+const API_URL = "https://warrant-identifier-weekly-edinburgh.trycloudflare.com";

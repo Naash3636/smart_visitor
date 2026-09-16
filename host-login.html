@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Host Login | JAIN</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="navbar">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#features">
+            Features
+        </a>
+
+        <a href="index.html#how-it-works">
+            How It Works
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+        <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            type="button"
+            aria-label="Toggle dark mode">
+            🌙
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- LOGIN PAGE -->
+
+<main class="login-page">
+
+
+    <div class="login-card">
+
+
+        <div class="login-icon">
+            🔐
+        </div>
+
+
+        <span class="login-label">
+            AUTHORIZED ACCESS
+        </span>
+
+
+        <h1>
+            Host Login
+        </h1>
+
+
+        <p>
+            Login to manage visitor appointments
+            and approval requests.
+        </p>
+
+
+
+        <form id="hostLoginForm">
+
+
+            <div class="form-group">
+
+                <label>
+                    Host Email
+                </label>
+
+                <input
+                    type="email"
+                    id="hostEmail"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="hostPassword"
+                    placeholder="Enter your password"
+                    required>
+
+            </div>
+
+
+
+            <div class="login-options">
+
+                <label>
+
+                    <input
+                        type="checkbox">
+
+                    Remember me
+
+                </label>
+
+                <a href="#">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Login to Dashboard
+                <span>→</span>
+
+            </button>
+
+
+        </form>
+
+
+
+        <div class="demo-login">
+
+            <strong>
+                Demo Host Account
+            </strong>
+
+            <p>
+                Email: dean@jain.edu
+            </p>
+
+            <p>
+                Password: 123456
+            </p>
+
+        </div>
+
+
+        <a
+            href="index.html"
+            class="back-home">
+
+            ← Back to Home
+
+        </a>
+
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    <div>
+
+        <h3>
+            JAIN Smart Visitor Management
+        </h3>
+
+        <p>
+            Digital. Secure. Smart. Seamless.
+        </p>
+
+    </div>
+
+
+    <div class="footer-right">
+
+        <p>
+            © 2026 JAIN Smart Visitor Management
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<script>
+
+document.getElementById("hostLoginForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const email =
+        document.getElementById("hostEmail").value.trim();
+
+    const password =
+        document.getElementById("hostPassword").value.trim();
+
+
+    // DEMO HOST LOGIN
+
+    if (
+        email === "dean@jain.edu" &&
+        password === "123456"
+    ) {
+
+        // Save login information
+
+        localStorage.setItem(
+            "hostLoggedIn",
+            "true"
+        );
+
+        localStorage.setItem(
+            "hostName",
+            "Dean - Academics"
+        );
+
+
+        // Go to dashboard
+
+        window.location.href =
+            "host-dashboard.html";
+
+    }
+
+    else {
+
+        alert(
+            "Invalid login details.\n\n" +
+            "Please use:\n" +
+            "Email: dean@jain.edu\n" +
+            "Password: 123456"
+        );
+
+    }
+
+});
+
+</script>
+<script src="js/theme.js"></script>
+</body>
+</html>

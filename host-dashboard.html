@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Host Dashboard | JAIN</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<meta
+    http-equiv="Cache-Control"
+    content="no-store, no-cache, must-revalidate">
+
+<meta
+    http-equiv="Pragma"
+    content="no-cache">
+
+<meta
+    http-equiv="Expires"
+    content="0">
+<body class="dashboard-body">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="dashboard-header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+
+        </div>
+
+    </div>
+<div class="dashboard-actions">
+
+    <button
+        id="themeToggle"
+        class="theme-toggle-btn"
+        type="button"
+        aria-label="Toggle dark mode">
+        🌙
+    </button>
+
+</div>
+
+    <div class="host-profile">
+
+        <div class="notification-icon">
+            🔔
+        </div>
+
+        <div class="profile-info">
+
+            <strong id="hostDisplayName">
+                Dean - Academics
+            </strong>
+
+            <span>
+                Host
+            </span>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="hostLogout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     DASHBOARD LAYOUT
+===================================================== -->
+
+<div class="dashboard-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            HOST PORTAL
+        </div>
+
+
+        <a
+            href="#"
+            class="sidebar-link active">
+
+            <span>▣</span>
+            Dashboard
+
+        </a>
+
+
+        <a
+            href="#requests"
+            class="sidebar-link">
+
+            <span>▤</span>
+            Visitor Requests
+
+        </a>
+
+
+        <a
+            href="#approved"
+            class="sidebar-link">
+
+            <span>✓</span>
+            Approved Visits
+
+        </a>
+
+
+        <a
+            href="#history"
+            class="sidebar-link">
+
+            <span>◷</span>
+            Visit History
+
+        </a>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="index.html"
+                class="sidebar-link">
+
+                <span>←</span>
+                Back to Website
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-toolbar">
+
+            <div class="dashboard-search">
+
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="visitorSearch"
+                    placeholder="Search visitors, ID or purpose...">
+
+                <kbd>Ctrl K</kbd>
+
+            </div>
+
+
+            <div class="toolbar-date">
+
+                <span>📅</span>
+
+                <div>
+
+                    <small>Today</small>
+
+                    <strong id="toolbarDate">
+                        03 Sep 2026
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- WELCOME -->
+
+        <div class="dashboard-welcome">
+
+            <div>
+
+                <span class="dashboard-label">
+                    HOST DASHBOARD
+                </span>
+
+                <h1>
+                    Welcome,
+                    <span id="welcomeHost">
+                        Dean
+                    </span>
+                </h1>
+
+                <p>
+                    Manage your visitor appointments
+                    and approval requests.
+                </p>
+
+            </div>
+
+
+            <div class="current-date">
+
+                <span>
+                    TODAY
+                </span>
+
+                <strong id="todayDate">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STAT CARDS
+        ================================================== -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    👥
+                </div>
+
+                <div>
+
+                    <span>
+                        Today's Visitors
+                    </span>
+
+                    <strong id="todayVisitors">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <span>
+                        Pending Requests
+                    </span>
+
+                    <strong id="pendingVisitors">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Approved Visits
+                    </span>
+
+                    <strong id="approvedVisitors">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    🏫
+                </div>
+
+                <div>
+
+                    <span>
+                        Currently Visiting
+                    </span>
+
+                    <strong id="currentVisitors">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             VISITOR REQUESTS
+        ================================================== -->
+
+        <section
+            class="dashboard-section"
+            id="requests">
+
+
+            <div class="section-title-row">
+
+                <div>
+
+                    <h2>
+                        Visitor Requests
+                    </h2>
+
+                    <p>
+                        Review and manage incoming
+                        visitor appointments.
+                    </p>
+
+                </div>
+
+
+                <span class="request-count"
+                      id="requestCount">
+
+                    0 Requests
+
+                </span>
+
+            </div>
+
+
+
+            <!-- REQUEST CONTAINER -->
+
+            <div id="visitorRequests">
+
+
+                <!-- JavaScript will insert
+                     visitor request here -->
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             APPROVED VISITS
+        ================================================== -->
+
+        <section
+            class="dashboard-section"
+            id="approved">
+
+
+            <div class="section-title-row">
+
+                <div>
+
+                    <h2>
+                        Approved Visits
+                    </h2>
+
+                    <p>
+                        Visitors whose appointments
+                        have been approved.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="approvedVisitorsList">
+
+                <!-- JavaScript -->
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+/* ==========================================
+   HOST AUTHENTICATION CHECK
+========================================== */
+
+if (
+    localStorage.getItem("hostLoggedIn")
+    !== "true"
+) {
+
+    window.location.replace(
+        "host-login.html"
+    );
+
+}
+
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadHostDashboard();
+
+    }
+);
+
+
+
+/* =====================================================
+   LOAD DASHBOARD
+===================================================== */
+
+function loadHostDashboard() {
+
+    /* ==========================================
+       GET ALL VISITORS
+    ========================================== */
+
+    const savedData =
+        localStorage.getItem("visitors");
+
+    const visitors =
+        savedData
+            ? JSON.parse(savedData)
+            : [];
+
+
+    /* ==========================================
+       HOST INFORMATION
+    ========================================== */
+
+    const hostName =
+        localStorage.getItem("hostName")
+        || "Dean - Academics";
+
+
+    document.getElementById(
+        "hostDisplayName"
+    ).textContent = hostName;
+
+
+    document.getElementById(
+        "welcomeHost"
+    ).textContent =
+        hostName.replace(
+            " - Academics",
+            ""
+        );
+
+
+    /* ==========================================
+       TODAY'S DATE
+    ========================================== */
+
+    const today =
+        new Date();
+
+
+    document.getElementById(
+        "todayDate"
+    ).textContent =
+        today.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+
+    /* ==========================================
+       FILTER VISITORS
+    ========================================== */
+
+    const pendingVisitors =
+        visitors.filter(
+            visitor =>
+                visitor.status === "PENDING"
+        );
+
+
+    const approvedVisitors =
+        visitors.filter(
+            visitor =>
+                visitor.status === "APPROVED"
+                ||
+                visitor.status === "CHECKED_IN"
+        );
+
+
+    const todayString =
+        today.toISOString()
+            .split("T")[0];
+
+
+    const todayVisitors =
+        visitors.filter(
+            visitor =>
+                visitor.visitDate === todayString
+        );
+
+
+    const currentVisitors =
+        visitors.filter(
+            visitor =>
+                visitor.status === "CHECKED_IN"
+        );
+
+
+    /* ==========================================
+       UPDATE DASHBOARD STATS
+    ========================================== */
+
+    document.getElementById(
+        "todayVisitors"
+    ).textContent =
+        todayVisitors.length;
+
+
+    document.getElementById(
+        "pendingVisitors"
+    ).textContent =
+        pendingVisitors.length;
+
+
+    document.getElementById(
+        "approvedVisitors"
+    ).textContent =
+        approvedVisitors.length;
+
+
+    document.getElementById(
+        "currentVisitors"
+    ).textContent =
+        currentVisitors.length;
+
+
+    /* ==========================================
+       DISPLAY PENDING REQUESTS
+    ========================================== */
+
+    const requestContainer =
+        document.getElementById(
+            "visitorRequests"
+        );
+
+
+    const requestCount =
+        document.getElementById(
+            "requestCount"
+        );
+
+
+    if (pendingVisitors.length === 0) {
+
+        requestCount.textContent =
+            "No Pending Requests";
+
+
+        requestContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ✓
+                </div>
+
+                <h3>
+                    No Pending Requests
+                </h3>
+
+                <p>
+                    There are currently no visitor
+                    requests waiting for approval.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        requestCount.textContent =
+            pendingVisitors.length === 1
+                ? "1 Pending Request"
+                : pendingVisitors.length +
+                  " Pending Requests";
+
+
+        requestContainer.innerHTML =
+            pendingVisitors
+                .map(
+                    visitor =>
+                        createVisitorRequestCard(
+                            visitor
+                        )
+                )
+                .join("");
+
+    }
+
+
+    /* ==========================================
+       DISPLAY APPROVED VISITORS
+    ========================================== */
+
+    const approvedContainer =
+        document.getElementById(
+            "approvedVisitorsList"
+        );
+
+
+    if (approvedVisitors.length === 0) {
+
+        approvedContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+                <h3>
+                    No Approved Visits
+                </h3>
+
+                <p>
+                    Approved visitor appointments
+                    will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        approvedContainer.innerHTML =
+            approvedVisitors
+                .map(
+                    visitor =>
+                        createApprovedVisitorCard(
+                            visitor
+                        )
+                )
+                .join("");
+
+    }
+
+}
+
+function createVisitorRequestCard(visitor) {
+
+    return `
+
+        <div class="visitor-request-card">
+
+            <div class="request-main">
+
+                <div class="visitor-avatar">
+
+                    ${getInitials(visitor.name)}
+
+                </div>
+
+
+                <div class="visitor-info">
+
+                    <h3>
+                        ${visitor.name}
+                    </h3>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="request-details">
+
+                <div>
+
+                    <span>
+                        Department
+                    </span>
+
+                    <strong>
+                        ${visitor.department}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Person to Meet
+                    </span>
+
+                    <strong>
+                        ${visitor.host}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Visit Date
+                    </span>
+
+                    <strong>
+                        ${visitor.visitDate}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Preferred Time
+                    </span>
+
+                    <strong>
+                        ${visitor.visitTime}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Purpose
+                    </span>
+
+                    <strong>
+                        ${visitor.purpose}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="request-actions">
+
+                <button
+                    class="reject-btn"
+                    onclick="rejectVisitor('${visitor.visitorID}')">
+
+                    ✕ Reject
+
+                </button>
+
+
+                <button
+                    class="approve-btn"
+                    onclick="approveVisitor('${visitor.visitorID}')">
+
+                    ✓ Approve
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   DISPLAY VISITOR REQUEST
+===================================================== */
+
+function displayVisitorRequest(visitor) {
+
+
+    const container =
+        document.getElementById(
+            "visitorRequests"
+        );
+
+
+    const requestCount =
+        document.getElementById(
+            "requestCount"
+        );
+
+
+
+    if (
+        visitor.status !== "PENDING"
+    ) {
+
+        requestCount.textContent =
+            "No Pending Requests";
+
+
+        container.innerHTML = `
+        
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ✓
+                </div>
+
+                <h3>
+                    No Pending Requests
+                </h3>
+
+                <p>
+                    There are currently no visitor
+                    requests waiting for approval.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    requestCount.textContent =
+        "1 Pending Request";
+
+
+
+    container.innerHTML = `
+
+        <div class="visitor-request-card">
+
+
+            <div class="request-main">
+
+
+                <div class="visitor-avatar">
+
+                    ${getInitials(visitor.name)}
+
+                </div>
+
+
+                <div class="visitor-info">
+
+                    <h3>
+                        ${visitor.name}
+                    </h3>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="request-details">
+
+
+                <div>
+
+                    <span>
+                        Department
+                    </span>
+
+                    <strong>
+                        ${visitor.department}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Person to Meet
+                    </span>
+
+                    <strong>
+                        ${visitor.host}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Visit Date
+                    </span>
+
+                    <strong>
+                        ${visitor.visitDate}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Preferred Time
+                    </span>
+
+                    <strong>
+                        ${visitor.visitTime}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Purpose
+                    </span>
+
+                    <strong>
+                        ${visitor.purpose}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="request-actions">
+
+
+                <button
+                    class="reject-btn"
+                    onclick="rejectVisitor()">
+
+                    ✕ Reject
+
+                </button>
+
+
+                <button
+                    class="approve-btn"
+                    onclick="approveVisitor()">
+
+                    ✓ Approve
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   NO REQUESTS
+===================================================== */
+
+function showNoRequests() {
+
+
+    document.getElementById(
+        "requestCount"
+    ).textContent =
+        "No Requests";
+
+
+    document.getElementById(
+        "visitorRequests"
+    ).innerHTML = `
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📭
+            </div>
+
+            <h3>
+                No Visitor Requests
+            </h3>
+
+            <p>
+                New visitor appointment requests
+                will appear here.
+            </p>
+
+        </div>
+
+    `;
+
+
+
+    document.getElementById(
+        "approvedVisitorsList"
+    ).innerHTML = `
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                👥
+            </div>
+
+            <h3>
+                No Approved Visits
+            </h3>
+
+            <p>
+                Approved visitor appointments
+                will appear here.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+
+
+/* =====================================================
+   APPROVED VISITOR
+===================================================== */
+
+function displayApprovedVisitor(visitor) {
+
+
+    const container =
+        document.getElementById(
+            "approvedVisitorsList"
+        );
+
+
+    if (
+        visitor.status !== "APPROVED" &&
+        visitor.status !== "CHECKED_IN" &&
+        visitor.status !== "COMPLETED"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+                <h3>
+                    No Approved Visits
+                </h3>
+
+                <p>
+                    Approved appointments will
+                    appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    container.innerHTML = `
+
+        <div class="approved-visitor-card">
+
+
+            <div class="approved-avatar">
+
+                ${getInitials(visitor.name)}
+
+            </div>
+
+
+            <div class="approved-info">
+
+                <h3>
+                    ${visitor.name}
+                </h3>
+
+                <p>
+                    ${visitor.purpose}
+                </p>
+
+            </div>
+
+
+            <div class="approved-meta">
+
+                <span>
+                    ${visitor.visitDate}
+                </span>
+
+                <strong>
+                    ${visitor.visitTime}
+                </strong>
+
+            </div>
+
+
+            <span class="approved-status">
+
+                ✓ APPROVED
+
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   DISPLAY APPROVED VISITOR CARD
+===================================================== */
+
+function createApprovedVisitorCard(visitor) {
+
+    return `
+        <div class="approved-visitor-card">
+
+            <div class="approved-avatar">
+                ${getInitials(visitor.name)}
+            </div>
+
+            <div class="approved-info">
+
+                <h3>
+                    ${visitor.name}
+                </h3>
+
+                <p>
+                    Visitor ID: ${visitor.visitorID}
+                </p>
+
+                <p>
+                    ${visitor.purpose}
+                </p>
+
+            </div>
+
+            <div class="approved-meta">
+
+                <span>
+                    ${visitor.visitDate}
+                </span>
+
+                <strong>
+                    ${visitor.visitTime}
+                </strong>
+
+            </div>
+
+            <span class="approved-status">
+                ✓ APPROVED
+            </span>
+
+        </div>
+    `;
+}
+/* =====================================================
+   INITIALS
+===================================================== */
+
+function getInitials(name) {
+
+    return name
+        .split(" ")
+        .map(
+            word => word.charAt(0)
+        )
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function hostLogout() {
+
+    /* Remove authentication */
+
+    localStorage.removeItem(
+        "hostLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "hostName"
+    );
+
+
+    /* Prevent dashboard from being restored */
+
+    window.location.replace(
+        "host-login.html"
+    );
+
+}
+
+function approveVisitor(visitorID) {
+
+    let visitors =
+        JSON.parse(
+            localStorage.getItem("visitors")
+        ) || [];
+
+
+    visitors =
+        visitors.map(
+            visitor => {
+
+                if (
+                    visitor.visitorID
+                    === visitorID
+                ) {
+
+                    return {
+
+                        ...visitor,
+
+                        status:
+                            "APPROVED"
+
+                    };
+
+                }
+
+                return visitor;
+
+            }
+        );
+
+
+    localStorage.setItem(
+        "visitors",
+        JSON.stringify(visitors)
+    );
+
+
+    /*
+     * Keep latest selected visitor
+     */
+
+    const approved =
+        visitors.find(
+            v =>
+                v.visitorID
+                === visitorID
+        );
+
+
+    localStorage.setItem(
+        "visitorData",
+        JSON.stringify(approved)
+    );
+
+loadHostDashboard();
+    
+
+}
+
+
+function rejectVisitor(visitorID) {
+
+    let visitors =
+        JSON.parse(
+            localStorage.getItem("visitors")
+        ) || [];
+
+
+    visitors =
+        visitors.map(
+            visitor => {
+
+                if (
+                    visitor.visitorID
+                    === visitorID
+                ) {
+
+                    return {
+
+                        ...visitor,
+
+                        status:
+                            "REJECTED"
+
+                    };
+
+                }
+
+                return visitor;
+
+            }
+        );
+
+
+    localStorage.setItem(
+        "visitors",
+        JSON.stringify(visitors)
+    );
+
+
+    loadHostDashboard();
+
+}
+/* =====================================================
+   DARK / LIGHT MODE
+===================================================== */
+
+const themeToggle =
+    document.getElementById("themeToggle");
+
+
+/* Load saved theme */
+
+const savedTheme =
+    localStorage.getItem("dashboardTheme");
+
+
+if (savedTheme === "dark") {
+
+    document.body.classList.add(
+        "dark-mode"
+    );
+
+    if (themeToggle) {
+
+        themeToggle.checked = true;
+
+    }
+
+}
+
+
+/* Toggle theme */
+
+if (themeToggle) {
+
+    themeToggle.addEventListener(
+        "change",
+        function () {
+
+            if (this.checked) {
+
+                document.body.classList.add(
+                    "dark-mode"
+                );
+
+                localStorage.setItem(
+                    "dashboardTheme",
+                    "dark"
+                );
+
+            }
+
+            else {
+
+                document.body.classList.remove(
+                    "dark-mode"
+                );
+
+                localStorage.setItem(
+                    "dashboardTheme",
+                    "light"
+                );
+
+            }
+
+        }
+    );
+
+}
+/* =====================================================
+   VISITOR SEARCH
+===================================================== */
+
+const searchInput =
+    document.getElementById(
+        "visitorSearch"
+    );
+
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            const query =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const cards =
+                document.querySelectorAll(
+                    ".visitor-request-card"
+                );
+
+
+            cards.forEach(
+                card => {
+
+                    const text =
+                        card.textContent
+                            .toLowerCase();
+
+
+                    if (
+                        text.includes(query)
+                    ) {
+
+                        card.style.display =
+                            "";
+
+                    }
+
+                    else {
+
+                        card.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+/* =====================================================
+   SEARCH SHORTCUT
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            (event.ctrlKey || event.metaKey)
+            &&
+            event.key.toLowerCase() === "k"
+        ) {
+
+            event.preventDefault();
+
+            const search =
+                document.getElementById(
+                    "visitorSearch"
+                );
+
+            if (search) {
+
+                search.focus();
+
+            }
+
+        }
+
+    }
+);
+</script>
+
+<script src="js/theme.js"></script>
+
+</body>
+</html>

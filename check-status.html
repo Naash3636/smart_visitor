@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Check Visit Status | JAIN</title>
+
+    <link rel="stylesheet"
+      href="css/style.css">
+
+</head>
+
+
+<body>
+
+<header class="header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+        </div>
+
+    </div>
+
+
+    <nav class="navbar">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#features">
+            Features
+        </a>
+
+        <a href="index.html#how-it-works">
+            How It Works
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+
+        <a href="login.html">
+            Login
+        </a>
+        <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            type="button"
+            aria-label="Toggle dark mode">
+
+            🌙
+
+        </button>
+        
+    </nav>
+
+</header>
+
+
+
+<main class="status-page">
+
+
+    <div class="status-lookup-card">
+
+
+        <div class="status-lookup-icon">
+            🔎
+        </div>
+
+
+        <span class="login-label">
+            VISITOR PORTAL
+        </span>
+
+
+        <h1>
+            Check Visit Status
+        </h1>
+
+
+        <p>
+            Enter your Visitor ID to view your
+            appointment status and digital pass.
+        </p>
+
+
+        <form id="statusForm">
+
+
+            <div class="form-group">
+
+                <label>
+                    Visitor ID
+                </label>
+
+                <input
+                    type="text"
+                    id="visitorID"
+                    placeholder="Example: VIS216844"
+                    required>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Check Status
+                <span>→</span>
+
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="statusResult"
+            class="status-result">
+        </div>
+
+
+        <a
+            href="register.html"
+            class="register-again">
+
+            Need to book another visit?
+
+            <strong>
+                Register Here
+            </strong>
+
+        </a>
+
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    <div>
+
+        <h3>
+            JAIN Smart Visitor Management
+        </h3>
+
+        <p>
+            Digital. Secure. Smart. Seamless.
+        </p>
+
+    </div>
+
+
+    <div class="footer-right">
+
+        <p>
+            © 2026 JAIN Smart Visitor Management
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<script>
+
+
+document.getElementById("statusForm").addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+        const enteredID =
+            document
+                .getElementById("visitorID")
+                .value
+                .trim()
+                .toUpperCase();
+
+        const result =
+            document.getElementById("statusResult");
+
+
+        /* Get ALL visitors */
+
+        const savedData =
+            localStorage.getItem("visitors");
+
+
+        if (!savedData) {
+
+            result.innerHTML = `
+
+                <div class="status-error">
+
+                    <strong>
+                        Visitor Record Not Found
+                    </strong>
+
+                    <p>
+                        No visit requests have been
+                        registered yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        const visitors =
+            JSON.parse(savedData);
+
+
+        /* Find requested visitor */
+
+        const visitor =
+            visitors.find(
+                v =>
+                    v.visitorID &&
+                    v.visitorID.toUpperCase()
+                    === enteredID
+            );
+
+
+        if (!visitor) {
+
+            result.innerHTML = `
+
+                <div class="status-error">
+
+                    <strong>
+                        Invalid Visitor ID
+                    </strong>
+
+                    <p>
+                        No visit request was found
+                        for this Visitor ID.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* Save selected visitor */
+
+        localStorage.setItem(
+            "visitorData",
+            JSON.stringify(visitor)
+        );
+
+
+        /* ===============================
+           PENDING
+        =============================== */
+
+        if (visitor.status === "PENDING") {
+
+            result.innerHTML = `
+
+                <div class="status-pending">
+
+                    <div class="result-status-icon">
+                        ⏳
+                    </div>
+
+                    <strong>
+                        Pending Host Approval
+                    </strong>
+
+                    <p>
+                        Your visit request has been
+                        submitted successfully.
+                    </p>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* ===============================
+           REJECTED
+        =============================== */
+
+        if (visitor.status === "REJECTED") {
+
+            result.innerHTML = `
+
+                <div class="status-error">
+
+                    <strong>
+                        Visit Request Rejected
+                    </strong>
+
+                    <p>
+                        Your host has rejected
+                        this visit request.
+                    </p>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* ===============================
+           APPROVED
+        =============================== */
+
+        if (visitor.status === "APPROVED") {
+
+            result.innerHTML = `
+
+                <div class="status-approved">
+
+                    <div class="result-status-icon">
+                        ✓
+                    </div>
+
+                    <strong>
+                        Visit Approved
+                    </strong>
+
+                    <p>
+                        Your host has approved
+                        your visit.
+                    </p>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+
+                    <button
+                        onclick="window.location.href='visitor-status.html'"
+                        class="view-pass-btn">
+
+                        View Digital Visitor Pass →
+
+                    </button>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* ===============================
+           CHECKED IN
+        =============================== */
+
+        if (visitor.status === "CHECKED_IN") {
+
+            result.innerHTML = `
+
+                <div class="status-approved">
+
+                    <div class="result-status-icon">
+                        ✓
+                    </div>
+
+                    <strong>
+                        Currently Visiting
+                    </strong>
+
+                    <p>
+                        You have successfully
+                        checked in to the campus.
+                    </p>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                    <button
+                        onclick="window.location.href='visitor-status.html'"
+                        class="view-pass-btn">
+
+                        View Visitor Pass →
+
+                    </button>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* ===============================
+           COMPLETED
+        =============================== */
+
+        if (visitor.status === "COMPLETED") {
+
+            result.innerHTML = `
+
+                <div class="status-completed">
+
+                    <div class="result-status-icon">
+                        ✓
+                    </div>
+
+                    <strong>
+                        Visit Completed
+                    </strong>
+
+                    <p>
+                        Your campus visit has
+                        been successfully completed.
+                    </p>
+
+                    <span>
+                        Visitor ID:
+                        ${visitor.visitorID}
+                    </span>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+);
+
+
+</script>
+
+<script src="js/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Visitor Pass | JAIN</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <!-- QR CODE LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="navbar">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#features">
+            Features
+        </a>
+
+        <a href="index.html#how-it-works">
+            How It Works
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+        <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            type="button"
+            aria-label="Toggle dark mode">
+            🌙
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =====================================================
+     VISITOR PASS PAGE
+===================================================== -->
+
+<main class="pass-page">
+
+
+    <!-- PENDING MESSAGE -->
+
+    <div
+        id="pendingSection"
+        class="status-card">
+
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+
+        <span class="status-label">
+            VISIT REQUEST SUBMITTED
+        </span>
+
+
+        <h1>
+            Your Visit Request is Submitted
+        </h1>
+
+
+        <p class="status-description">
+
+            Your appointment request has been
+            successfully submitted to the host.
+
+        </p>
+
+
+        <div class="visitor-id-box">
+
+            <span>
+                YOUR VISITOR ID
+            </span>
+
+            <strong id="pendingVisitorID">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="pending-box">
+
+            <div class="pending-icon">
+                ⏳
+            </div>
+
+            <div>
+
+                <strong>
+                    Pending Host Approval
+                </strong>
+
+                <p>
+                    Your digital visitor pass will
+                    become available once your host
+                    approves the request.
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         APPROVED DIGITAL PASS
+    ================================================== -->
+
+    <div
+        id="passSection"
+        class="digital-pass-container">
+
+
+        <!-- TOP -->
+
+        <div class="pass-top">
+
+            <div>
+
+                <span class="pass-university">
+                    JAIN
+                </span>
+
+                <h1>
+                    Digital Visitor Pass
+                </h1>
+
+                <p>
+                    Smart Visitor Management
+                </p>
+
+            </div>
+
+
+            <div class="pass-approved">
+
+                <span class="pass-check">
+                    ✓
+                </span>
+
+                APPROVED
+
+            </div>
+
+        </div>
+
+
+
+        <!-- QR -->
+
+        <div class="qr-section">
+
+            <div
+                id="qrcode"
+                class="real-qr">
+            </div>
+
+            <p>
+                Scan this QR code at the
+                security gate
+            </p>
+
+        </div>
+
+
+
+        <!-- VISITOR ID -->
+
+        <div class="pass-id">
+
+            <span>
+                VISITOR ID
+            </span>
+
+            <strong id="passVisitorID">
+                -
+            </strong>
+
+        </div>
+
+
+
+        <!-- DETAILS -->
+
+        <div class="pass-information">
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Visitor Name
+                </span>
+
+                <strong id="passName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Person to Meet
+                </span>
+
+                <strong id="passHost">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Department
+                </span>
+
+                <strong id="passDepartment">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Purpose
+                </span>
+
+                <strong id="passPurpose">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Visit Date
+                </span>
+
+                <strong id="passDate">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="pass-detail">
+
+                <span>
+                    Visit Time
+                </span>
+
+                <strong id="passTime">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- SECURITY MESSAGE -->
+
+        <div class="gate-message">
+
+            🔐
+            
+            <div>
+
+                <strong>
+                    Gate Entry Instructions
+                </strong>
+
+                <p>
+                    Please present this digital pass
+                    along with your valid ID at the
+                    campus security gate.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <div class="pass-footer">
+
+            <span>
+                JAIN Smart Visitor Management
+            </span>
+
+            <span>
+                Digital • Secure • Smart
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    <div>
+
+        <h3>
+            JAIN Smart Visitor Management
+        </h3>
+
+        <p>
+            Digital. Secure. Smart. Seamless.
+        </p>
+
+    </div>
+
+
+    <div class="footer-right">
+
+        <p>
+            © 2026 JAIN Smart Visitor Management
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =====================================================
+     PASS JAVASCRIPT
+===================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadVisitorPass();
+
+    }
+);
+
+
+
+function loadVisitorPass() {
+
+    const savedData =
+        localStorage.getItem("visitorData");
+
+
+    if (!savedData) {
+
+        alert(
+            "No visitor information found."
+        );
+
+        return;
+
+    }
+
+
+    const visitor =
+        JSON.parse(savedData);
+
+
+    /*
+     * Show pending or approved section
+     */
+
+    if (visitor.status === "APPROVED") {
+
+        showApprovedPass(visitor);
+
+    }
+
+    else {
+
+        showPending(visitor);
+
+    }
+
+}
+
+
+
+/* =====================================================
+   PENDING
+===================================================== */
+
+function showPending(visitor) {
+
+    document.getElementById(
+        "pendingSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "passSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "pendingVisitorID"
+    ).textContent =
+        visitor.visitorID;
+
+}
+
+
+
+/* =====================================================
+   APPROVED PASS
+===================================================== */
+
+function showApprovedPass(visitor) {
+
+    document.getElementById(
+        "pendingSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "passSection"
+    ).style.display = "block";
+
+
+    /*
+     * Visitor information
+     */
+
+    document.getElementById(
+        "passVisitorID"
+    ).textContent =
+        visitor.visitorID;
+
+
+    document.getElementById(
+        "passName"
+    ).textContent =
+        visitor.name;
+
+
+    document.getElementById(
+        "passHost"
+    ).textContent =
+        visitor.host;
+
+
+    document.getElementById(
+        "passDepartment"
+    ).textContent =
+        visitor.department;
+
+
+    document.getElementById(
+        "passPurpose"
+    ).textContent =
+        visitor.purpose;
+
+
+    document.getElementById(
+        "passDate"
+    ).textContent =
+        formatDate(visitor.visitDate);
+
+
+    document.getElementById(
+        "passTime"
+    ).textContent =
+        formatTime(visitor.visitTime);
+
+
+    /*
+     * QR CONTENT
+     *
+     * We only put the Visitor ID
+     * and validation information
+     * into the QR.
+     */
+
+    const qrData =
+        JSON.stringify({
+
+            visitorID:
+                visitor.visitorID,
+
+            status:
+                visitor.status,
+
+            visitDate:
+                visitor.visitDate,
+
+            visitTime:
+                visitor.visitTime
+
+        });
+
+
+    /*
+     * Generate QR
+     */
+
+    new QRCode(
+        document.getElementById("qrcode"),
+        {
+
+            text: qrData,
+
+            width: 190,
+
+            height: 190,
+
+            colorDark: "#092b63",
+
+            colorLight: "#ffffff",
+
+            correctLevel:
+                QRCode.CorrectLevel.H
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   DATE FORMAT
+===================================================== */
+
+function formatDate(date) {
+
+    if (!date) {
+        return "-";
+    }
+
+
+    const parts =
+        date.split("-");
+
+
+    if (parts.length !== 3) {
+        return date;
+    }
+
+
+    return (
+        parts[2] +
+        " " +
+        getMonth(parts[1]) +
+        " " +
+        parts[0]
+    );
+
+}
+
+
+function getMonth(month) {
+
+    const months = [
+
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+
+    ];
+
+
+    return months[
+        parseInt(month) - 1
+    ];
+
+}
+
+
+
+/* =====================================================
+   TIME FORMAT
+===================================================== */
+
+function formatTime(time) {
+
+    if (!time) {
+        return "-";
+    }
+
+
+    const parts =
+        time.split(":");
+
+
+    let hour =
+        parseInt(parts[0]);
+
+
+    const minute =
+        parts[1];
+
+
+    const period =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+
+    hour =
+        hour % 12 || 12;
+
+
+    return (
+        hour +
+        ":" +
+        minute +
+        " " +
+        period
+    );
+
+}
+
+</script>
+
+<script src="js/theme.js"></script>
+
+</body>
+</html>

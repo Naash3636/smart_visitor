@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Security Dashboard | JAIN</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <script src="https://unpkg.com/html5-qrcode"
+        type="text/javascript"></script>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<meta
+    http-equiv="Cache-Control"
+    content="no-store, no-cache, must-revalidate">
+
+<meta
+    http-equiv="Pragma"
+    content="no-cache">
+
+<meta
+    http-equiv="Expires"
+    content="0">
+
+<body class="dashboard-body">
+
+
+<header class="dashboard-header">
+
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="host-profile">
+
+        <div class="notification-icon">
+            🛡️
+        </div>
+
+        <div class="profile-info">
+
+            <strong>
+                Campus Security
+            </strong>
+
+            <span>
+                Security Officer
+            </span>
+
+
+        </div>
+        <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            type="button"
+            aria-label="Toggle dark mode">
+            🌙
+        </button>
+
+
+        <button
+            class="logout-btn"
+            onclick="securityLogout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+
+</header>
+
+
+
+<div class="dashboard-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+
+        <div class="sidebar-title">
+            SECURITY PORTAL
+        </div>
+
+
+        <a
+            href="#"
+            class="sidebar-link active">
+
+            <span>▣</span>
+            Gate Dashboard
+
+        </a>
+
+
+        <a
+            href="#scanner"
+            class="sidebar-link">
+
+            <span>▣</span>
+            Verify Visitor
+
+        </a>
+
+
+        <a
+            href="#checkedin"
+            class="sidebar-link">
+
+            <span>✓</span>
+            Checked-In Visitors
+
+        </a>
+
+
+        <a
+            href="#history"
+            class="sidebar-link">
+
+            <span>◷</span>
+            Visit History
+
+        </a>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="index.html"
+                class="sidebar-link">
+
+                <span>←</span>
+                Back to Website
+
+            </a>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-main">
+
+
+        <div class="dashboard-welcome">
+
+            <div>
+
+                <span class="dashboard-label">
+                    SECURITY PORTAL
+                </span>
+
+                <h1>
+                    Gate Dashboard
+                </h1>
+
+                <p>
+                    Verify visitor passes and manage
+                    campus entry and exit.
+                </p>
+
+            </div>
+
+
+            <div class="current-date">
+
+                <span>
+                    TODAY
+                </span>
+
+                <strong id="securityDate">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    👥
+                </div>
+
+                <div>
+
+                    <span>
+                        Today's Visitors
+                    </span>
+
+                    <strong id="securityToday">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Checked In
+                    </span>
+
+                    <strong id="securityCheckedIn">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    🚪
+                </div>
+
+                <div>
+
+                    <span>
+                        Currently Inside
+                    </span>
+
+                    <strong id="securityInside">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Checked Out
+                    </span>
+
+                    <strong id="securityCheckedOut">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- VERIFY VISITOR -->
+
+        <section
+            class="security-section"
+            id="scanner">
+
+
+            <div class="security-section-header">
+
+                <div>
+
+                    <h2>
+                        Verify Visitor
+                    </h2>
+
+                    <p>
+                        Scan the digital visitor pass
+                        or enter the Visitor ID.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="verification-area">
+
+
+                <!-- SCANNER PLACEHOLDER -->
+
+                <div class="scanner-box">
+
+                    <div class="scanner-icon">
+                        ▣
+                    </div>
+
+                    <h3>
+                        Scan Visitor QR
+                    </h3>
+
+                    <p>
+                        Ask the visitor to display their
+                        digital visitor pass and scan the QR code.
+                    </p>
+
+
+                    <!-- QR CAMERA -->
+
+                    <div
+                        id="qr-reader"
+                        class="qr-reader">
+                    </div>
+
+
+                    <div class="scanner-divider">
+
+                        <span>OR</span>
+
+                    </div>
+
+
+                    <!-- MANUAL ID -->
+
+                    <div class="visitor-search">
+
+                        <input
+                            type="text"
+                            id="visitorSearch"
+                            placeholder="Enter Visitor ID">
+
+                        <button
+                            onclick="verifyVisitor()"
+                            class="approve-btn">
+
+                            Verify
+
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        id="startScannerBtn"
+                        class="start-scanner-btn"
+                        onclick="startQRScanner()">
+
+                        📷 Start Camera Scanner
+
+                    </button>
+
+
+                    <button
+                        id="stopScannerBtn"
+                        class="stop-scanner-btn"
+                        onclick="stopQRScanner()"
+                        style="display:none;">
+
+                        ✕ Stop Scanner
+
+                    </button>
+
+
+                    <span class="scanner-note">
+
+                        Camera access is required for QR scanning.
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- RESULT -->
+
+                <div
+                    id="verificationResult"
+                    class="verification-result">
+
+                    <div class="result-placeholder">
+
+                        <div>
+                            🔍
+                        </div>
+
+                        <h3>
+                            Waiting for Verification
+                        </h3>
+
+                        <p>
+                            Visitor information will
+                            appear here after verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- CHECKED IN -->
+
+        <section
+            class="security-section"
+            id="checkedin">
+
+
+            <div class="security-section-header">
+
+                <div>
+
+                    <h2>
+                        Current Visitors
+                    </h2>
+
+                    <p>
+                        Visitors currently inside
+                        the campus.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="currentVisitorsList">
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🏫
+                    </div>
+
+                    <h3>
+                        No Visitors Currently Inside
+                    </h3>
+
+                    <p>
+                        Checked-in visitors will
+                        appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   SECURITY AUTHENTICATION
+===================================================== */
+
+if (localStorage.getItem("securityLoggedIn") !== "true") {
+    window.location.replace("security-login.html");
+}
+
+
+/* =====================================================
+   PAGE LOAD
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadSecurityDashboard();
+});
+
+
+/* =====================================================
+   LOAD DASHBOARD
+===================================================== */
+
+function loadSecurityDashboard() {
+
+    const today = new Date();
+
+    document.getElementById("securityDate").textContent =
+        today.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+
+    updateSecurityStats();
+    displayCurrentVisitors();
+}
+
+
+/* =====================================================
+   GET ALL VISITORS
+===================================================== */
+
+function getVisitors() {
+
+    return JSON.parse(
+        localStorage.getItem("visitors")
+    ) || [];
+}
+
+
+/* =====================================================
+   SAVE ALL VISITORS
+===================================================== */
+
+function saveVisitors(visitors) {
+
+    localStorage.setItem(
+        "visitors",
+        JSON.stringify(visitors)
+    );
+}
+
+
+/* =====================================================
+   VERIFY VISITOR BY ID
+===================================================== */
+
+function verifyVisitor() {
+
+    const search =
+        document.getElementById("visitorSearch")
+        .value
+        .trim()
+        .toUpperCase();
+
+    if (!search) {
+
+        alert("Please enter a Visitor ID.");
+
+        return;
+    }
+
+    const visitors = getVisitors();
+
+    const visitor = visitors.find(function (v) {
+
+        return v.visitorID &&
+               v.visitorID.toUpperCase() === search;
+
+    });
+
+
+    if (!visitor) {
+
+        showInvalidVisitor(
+            "Visitor ID not found."
+        );
+
+        return;
+    }
+
+
+    /* ---------------------------------------------
+       CHECK VISITOR STATUS
+    --------------------------------------------- */
+
+    if (visitor.status === "PENDING") {
+
+        showInvalidVisitor(
+            "This visitor has not been approved by the host."
+        );
+
+        return;
+    }
+
+
+    if (visitor.status === "REJECTED") {
+
+        showInvalidVisitor(
+            "This visit request was rejected by the host."
+        );
+
+        return;
+    }
+
+
+    if (visitor.status === "COMPLETED") {
+
+        showInvalidVisitor(
+            "This visitor has already checked out."
+        );
+
+        return;
+    }
+
+
+    if (visitor.status === "CHECKED_IN") {
+
+        showCheckedInDetails(visitor);
+
+        return;
+    }
+
+
+    if (visitor.status === "APPROVED") {
+
+        localStorage.setItem(
+            "visitorData",
+            JSON.stringify(visitor)
+        );
+
+        showValidVisitor(visitor);
+
+        return;
+    }
+
+
+    showInvalidVisitor(
+        "Visitor status is not valid for entry."
+    );
+}
+
+
+/* =====================================================
+   SHOW APPROVED VISITOR
+===================================================== */
+
+function showValidVisitor(visitor) {
+
+    const result =
+        document.getElementById(
+            "verificationResult"
+        );
+
+
+    result.innerHTML = `
+
+        <div class="valid-result">
+
+            <div class="valid-header">
+
+                <div class="valid-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        VERIFIED
+                    </span>
+
+                    <h3>
+                        Visitor Approved
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="verified-details">
+
+                <div>
+                    <span>Visitor ID</span>
+                    <strong>${visitor.visitorID}</strong>
+                </div>
+
+                <div>
+                    <span>Visitor Name</span>
+                    <strong>${visitor.name}</strong>
+                </div>
+
+                <div>
+                    <span>Person to Meet</span>
+                    <strong>${visitor.host}</strong>
+                </div>
+
+                <div>
+                    <span>Department</span>
+                    <strong>${visitor.department}</strong>
+                </div>
+
+                <div>
+                    <span>Visit Date</span>
+                    <strong>${visitor.visitDate}</strong>
+                </div>
+
+                <div>
+                    <span>Visit Time</span>
+                    <strong>${visitor.visitTime}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="entry-status">
+
+                <strong>
+                    ✓ ENTRY PERMITTED
+                </strong>
+
+                <p>
+                    Visitor identity and appointment
+                    have been verified.
+                </p>
+
+            </div>
+
+
+            <button
+                class="checkin-btn"
+                onclick="checkInVisitor('${visitor.visitorID}')">
+
+                ✓ Check In Visitor
+
+            </button>
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   SHOW ALREADY CHECKED-IN VISITOR
+===================================================== */
+
+function showCheckedInDetails(visitor) {
+
+    const result =
+        document.getElementById(
+            "verificationResult"
+        );
+
+
+    result.innerHTML = `
+
+        <div class="valid-result">
+
+            <div class="valid-header">
+
+                <div class="valid-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        CURRENTLY INSIDE
+                    </span>
+
+                    <h3>
+                        Visitor Checked In
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="verified-details">
+
+                <div>
+                    <span>Visitor ID</span>
+                    <strong>${visitor.visitorID}</strong>
+                </div>
+
+                <div>
+                    <span>Visitor Name</span>
+                    <strong>${visitor.name}</strong>
+                </div>
+
+                <div>
+                    <span>Person to Meet</span>
+                    <strong>${visitor.host}</strong>
+                </div>
+
+                <div>
+                    <span>Check-In Time</span>
+                    <strong>${formatTime(visitor.checkInTime)}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="entry-status">
+
+                <strong>
+                    ✓ VISITOR IS INSIDE CAMPUS
+                </strong>
+
+                <p>
+                    This visitor has already checked in.
+                </p>
+
+            </div>
+
+
+            <button
+                class="checkout-btn"
+                onclick="checkOutVisitor('${visitor.visitorID}')">
+
+                Check Out Visitor
+
+            </button>
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   INVALID VISITOR
+===================================================== */
+
+function showInvalidVisitor(message) {
+
+    const result =
+        document.getElementById(
+            "verificationResult"
+        );
+
+
+    result.innerHTML = `
+
+        <div class="invalid-result">
+
+            <div class="invalid-icon">
+                ✕
+            </div>
+
+            <h3>
+                Verification Failed
+            </h3>
+
+            <p>
+                ${message}
+            </p>
+
+            <span>
+                Entry is not permitted.
+            </span>
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   CHECK-IN VISITOR
+===================================================== */
+
+function checkInVisitor(visitorID) {
+
+    let visitors = getVisitors();
+
+
+    const visitorIndex =
+        visitors.findIndex(function (visitor) {
+
+            return visitor.visitorID === visitorID;
+
+        });
+
+
+    if (visitorIndex === -1) {
+
+        alert("Visitor record not found.");
+
+        return;
+    }
+
+
+    if (
+        visitors[visitorIndex].status !==
+        "APPROVED"
+    ) {
+
+        alert(
+            "This visitor cannot be checked in."
+        );
+
+        return;
+    }
+
+
+    visitors[visitorIndex].status =
+        "CHECKED_IN";
+
+
+    visitors[visitorIndex].checkInTime =
+        new Date().toISOString();
+
+
+    saveVisitors(visitors);
+
+
+    localStorage.setItem(
+        "visitorData",
+        JSON.stringify(
+            visitors[visitorIndex]
+        )
+    );
+
+
+    alert(
+        "✓ VISITOR CHECKED IN\n\n" +
+        visitors[visitorIndex].name +
+        " has successfully entered the campus."
+    );
+
+
+    updateSecurityStats();
+
+    displayCurrentVisitors();
+
+    showCheckedInDetails(
+        visitors[visitorIndex]
+    );
+}
+
+
+/* =====================================================
+   DISPLAY CURRENT VISITORS
+===================================================== */
+
+function displayCurrentVisitors() {
+
+    const container =
+        document.getElementById(
+            "currentVisitorsList"
+        );
+
+
+    const visitors = getVisitors();
+
+
+    const currentVisitors =
+        visitors.filter(function (visitor) {
+
+            return visitor.status === "CHECKED_IN";
+
+        });
+
+
+    if (currentVisitors.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🏫
+                </div>
+
+                <h3>
+                    No Visitors Currently Inside
+                </h3>
+
+                <p>
+                    Checked-in visitors will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        currentVisitors.map(function (visitor) {
+
+            return `
+
+                <div class="approved-visitor-card">
+
+                    <div class="approved-avatar">
+                        ${getInitials(visitor.name)}
+                    </div>
+
+
+                    <div class="approved-info">
+
+                        <h3>
+                            ${visitor.name}
+                        </h3>
+
+                        <p>
+                            ${visitor.host}
+                        </p>
+
+                        <small>
+                            ID: ${visitor.visitorID}
+                        </small>
+
+                    </div>
+
+
+                    <div class="approved-meta">
+
+                        <span>
+                            Checked In
+                        </span>
+
+                        <strong>
+                            ${formatTime(visitor.checkInTime)}
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        class="checkout-btn"
+                        onclick="checkOutVisitor('${visitor.visitorID}')">
+
+                        Check Out
+
+                    </button>
+
+                </div>
+
+            `;
+
+        }).join("");
+}
+
+
+/* =====================================================
+   CHECK-OUT VISITOR
+===================================================== */
+
+function checkOutVisitor(visitorID) {
+
+    let visitors = getVisitors();
+
+
+    const visitorIndex =
+        visitors.findIndex(function (visitor) {
+
+            return visitor.visitorID === visitorID;
+
+        });
+
+
+    if (visitorIndex === -1) {
+
+        alert("Visitor record not found.");
+
+        return;
+    }
+
+
+    visitors[visitorIndex].status =
+        "COMPLETED";
+
+
+    visitors[visitorIndex].checkOutTime =
+        new Date().toISOString();
+
+
+    saveVisitors(visitors);
+
+
+    localStorage.setItem(
+        "visitorData",
+        JSON.stringify(
+            visitors[visitorIndex]
+        )
+    );
+
+
+    alert(
+        "✓ VISITOR CHECKED OUT\n\n" +
+        visitors[visitorIndex].name +
+        " has exited the campus."
+    );
+
+
+    updateSecurityStats();
+
+    displayCurrentVisitors();
+
+
+    document.getElementById(
+        "verificationResult"
+    ).innerHTML = `
+
+        <div class="result-placeholder">
+
+            <div>
+                ✓
+            </div>
+
+            <h3>
+                Visitor Checked Out
+            </h3>
+
+            <p>
+                ${visitors[visitorIndex].name}
+                has successfully exited the campus.
+            </p>
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   SECURITY STATISTICS
+===================================================== */
+
+function updateSecurityStats() {
+
+    const visitors = getVisitors();
+
+
+    const today = new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+    let todayCount = 0;
+    let checkedIn = 0;
+    let inside = 0;
+    let checkedOut = 0;
+
+
+    visitors.forEach(function (visitor) {
+
+        if (
+            visitor.visitDate &&
+            new Date(visitor.visitDate)
+                .toISOString()
+                .split("T")[0] === today
+        ) {
+
+            todayCount++;
+
+        }
+
+
+        if (
+            visitor.status === "CHECKED_IN"
+        ) {
+
+            checkedIn++;
+            inside++;
+
+        }
+
+
+        if (
+            visitor.status === "COMPLETED"
+        ) {
+
+            checkedOut++;
+
+        }
+
+    });
+
+
+    document.getElementById(
+        "securityToday"
+    ).textContent = todayCount;
+
+
+    document.getElementById(
+        "securityCheckedIn"
+    ).textContent = checkedIn;
+
+
+    document.getElementById(
+        "securityInside"
+    ).textContent = inside;
+
+
+    document.getElementById(
+        "securityCheckedOut"
+    ).textContent = checkedOut;
+}
+
+
+/* =====================================================
+   QR SCANNER
+===================================================== */
+
+let html5QrCode = null;
+
+
+function startQRScanner() {
+
+    const reader =
+        document.getElementById(
+            "qr-reader"
+        );
+
+
+    if (typeof Html5Qrcode === "undefined") {
+
+        alert(
+            "QR scanner library could not be loaded."
+        );
+
+        return;
+    }
+
+
+    if (html5QrCode) {
+
+        return;
+    }
+
+
+    html5QrCode =
+        new Html5Qrcode("qr-reader");
+
+
+    const config = {
+
+        fps: 10,
+
+        qrbox: {
+            width: 250,
+            height: 250
+        }
+
+    };
+
+
+    html5QrCode.start(
+
+        {
+            facingMode: "environment"
+        },
+
+        config,
+
+        function(decodedText) {
+
+            processQRResult(decodedText);
+
+            stopQRScanner();
+
+        },
+
+        function(errorMessage) {
+
+            /* Scanner is continuously checking */
+
+        }
+
+    )
+    .then(function() {
+
+        document.getElementById(
+            "startScannerBtn"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "stopScannerBtn"
+        ).style.display = "block";
+
+    })
+    .catch(function(error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to start camera. Please allow camera access."
+        );
+
+        html5QrCode = null;
+
+    });
+}
+
+
+/* =====================================================
+   PROCESS QR RESULT
+===================================================== */
+
+function processQRResult(decodedText) {
+
+    let visitorID = decodedText.trim();
+
+
+    try {
+
+        const qrData =
+            JSON.parse(decodedText);
+
+
+        if (qrData.visitorID) {
+
+            visitorID =
+                qrData.visitorID;
+
+        }
+
+    } catch (error) {
+
+        /* QR contains plain Visitor ID */
+
+    }
+
+
+    document.getElementById(
+        "visitorSearch"
+    ).value = visitorID;
+
+
+    verifyVisitor();
+}
+
+
+/* =====================================================
+   STOP QR SCANNER
+===================================================== */
+
+function stopQRScanner() {
+
+    if (!html5QrCode) {
+
+        return;
+    }
+
+
+    html5QrCode.stop()
+        .then(function() {
+
+            html5QrCode.clear();
+
+            html5QrCode = null;
+
+
+            document.getElementById(
+                "startScannerBtn"
+            ).style.display = "block";
+
+
+            document.getElementById(
+                "stopScannerBtn"
+            ).style.display = "none";
+
+        })
+        .catch(function(error) {
+
+            console.error(error);
+
+        });
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function getInitials(name) {
+
+    if (!name) {
+        return "V";
+    }
+
+
+    return name
+        .split(" ")
+        .map(function(word) {
+
+            return word.charAt(0);
+
+        })
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+}
+
+
+function formatTime(dateTime) {
+
+    if (!dateTime) {
+
+        return "-";
+    }
+
+
+    return new Date(dateTime)
+        .toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function securityLogout() {
+
+    localStorage.removeItem(
+        "securityLoggedIn"
+    );
+
+
+    window.location.replace(
+        "security-login.html"
+    );
+}
+
+</script>
+
+<script src="js/theme.js"></script>
+</body>
+
+</html>

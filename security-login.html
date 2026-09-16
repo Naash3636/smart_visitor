@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Security Login | JAIN</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+<header class="header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">
+            🔒
+        </div>
+
+        <div>
+
+            <h2>JAIN</h2>
+
+            <span>
+                Smart Visitor Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="navbar">
+
+        <a href="index.html">Home</a>
+
+        <a href="index.html#features">Features</a>
+
+        <a href="index.html#how-it-works">
+            How It Works
+        </a>
+
+        <a href="index.html#about">About</a>
+        <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            type="button"
+            aria-label="Toggle dark mode">
+            🌙
+        </button>
+
+    </nav>
+    
+
+</header>
+
+
+
+<main class="login-page">
+
+
+    <div class="login-card">
+
+
+        <div class="login-icon">
+            🛡️
+        </div>
+
+
+        <span class="login-label">
+            SECURE ACCESS
+        </span>
+
+
+        <h1>
+            Security Login
+        </h1>
+
+
+        <p>
+            Access the visitor verification
+            and gate management portal.
+        </p>
+
+
+        <form id="securityLoginForm">
+
+
+            <div class="form-group">
+
+                <label>
+                    Security Email
+                </label>
+
+                <input
+                    type="email"
+                    id="securityEmail"
+                    placeholder="Enter security email"
+                    required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="securityPassword"
+                    placeholder="Enter password"
+                    required>
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Login to Security Portal
+                <span>→</span>
+
+            </button>
+
+
+        </form>
+
+
+
+        <div class="demo-login">
+
+            <strong>
+                Demo Security Account
+            </strong>
+
+            <p>
+                Email: security@jain.edu
+            </p>
+
+            <p>
+                Password: 123456
+            </p>
+
+        </div>
+
+
+        <a
+            href="index.html"
+            class="back-home">
+
+            ← Back to Home
+
+        </a>
+
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    <div>
+
+        <h3>
+            JAIN Smart Visitor Management
+        </h3>
+
+        <p>
+            Digital. Secure. Smart. Seamless.
+        </p>
+
+    </div>
+
+
+    <div class="footer-right">
+
+        <p>
+            © 2026 JAIN Smart Visitor Management
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<script>
+
+document.getElementById(
+    "securityLoginForm"
+).addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById(
+                "securityEmail"
+            ).value.trim();
+
+
+        const password =
+            document.getElementById(
+                "securityPassword"
+            ).value.trim();
+
+
+        if (
+            email === "security@jain.edu" &&
+            password === "123456"
+        ) {
+
+            localStorage.setItem(
+                "securityLoggedIn",
+                "true"
+            );
+
+
+            window.location.href =
+                "security-dashboard.html";
+
+        }
+
+        else {
+
+            alert(
+                "Invalid security login.\n\n" +
+                "Email: security@jain.edu\n" +
+                "Password: 123456"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+<script src="js/theme.js"></script>
+</body>
+
+</html>

@@ -531,52 +531,51 @@ document.addEventListener("DOMContentLoaded", function () {
    LOAD DASHBOARD
 ===================================================== */
 
-function loadSecurityDashboard() {
+async function loadSecurityDashboard() {
 
     const today = new Date();
 
-    document.getElementById("securityDate").textContent =
-        today.toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
 
-    updateSecurityStats();
-    displayCurrentVisitors();
+    document.getElementById(
+        "securityDate"
+    ).textContent =
+        today.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+
+    await updateSecurityStats();
+
+    await displayCurrentVisitors();
+
 }
-
-
 /* =====================================================
    GET ALL VISITORS
 ===================================================== */
 
-function getVisitors() {
+async function getVisitors() {
 
-    return JSON.parse(
-        localStorage.getItem("visitors")
-    ) || [];
-}
-
-
-/* =====================================================
-   SAVE ALL VISITORS
-===================================================== */
-
-function saveVisitors(visitors) {
-
-    localStorage.setItem(
-        "visitors",
-        JSON.stringify(visitors)
+    const response = await fetch(
+        "http://127.0.0.1:5000/api/visitors"
     );
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Unable to load visitors"
+        );
+
+    }
+
+    return await response.json();
+
 }
-
-
-/* =====================================================
-   VERIFY VISITOR BY ID
-===================================================== */
-
-function verifyVisitor() {
+async function verifyVisitor() {
 
     const search =
         document.getElementById("visitorSearch")
@@ -584,94 +583,162 @@ function verifyVisitor() {
         .trim()
         .toUpperCase();
 
+
     if (!search) {
 
-        alert("Please enter a Visitor ID.");
+        alert(
+            "Please enter a Visitor ID."
+        );
 
         return;
+
     }
 
-    const visitors = getVisitors();
 
-    const visitor = visitors.find(function (v) {
+    try {
 
-        return v.visitorID &&
-               v.visitorID.toUpperCase() === search;
+        /*
+         * GET VISITOR DIRECTLY FROM SQLITE
+         */
 
-    });
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(search)
+            );
 
 
-    if (!visitor) {
+        if (!response.ok) {
+
+            showInvalidVisitor(
+                "Visitor ID not found."
+            );
+
+            return;
+
+        }
+
+
+        const result =
+            await response.json();
+
+
+        const visitor =
+            result.visitor || result;
+
+
+        if (!visitor) {
+
+            showInvalidVisitor(
+                "Visitor ID not found."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Visitor from SQL:",
+            visitor
+        );
+
+
+        /*
+         * CHECK STATUS
+         */
+
+        if (
+            visitor.status ===
+            "PENDING"
+        ) {
+
+            showInvalidVisitor(
+                "This visitor has not been approved by the host."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            visitor.status ===
+            "REJECTED"
+        ) {
+
+            showInvalidVisitor(
+                "This visit request was rejected by the host."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            visitor.status ===
+            "COMPLETED"
+        ) {
+
+            showInvalidVisitor(
+                "This visitor has already checked out."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            visitor.status ===
+            "CHECKED_IN"
+        ) {
+
+            showCheckedInDetails(
+                visitor
+            );
+
+            return;
+
+        }
+
+
+        if (
+            visitor.status ===
+            "APPROVED"
+        ) {
+
+            showValidVisitor(
+                visitor
+            );
+
+            return;
+
+        }
+
 
         showInvalidVisitor(
-            "Visitor ID not found."
+            "Visitor status is not valid for entry."
         );
 
-        return;
     }
 
+    catch (error) {
 
-    /* ---------------------------------------------
-       CHECK VISITOR STATUS
-    --------------------------------------------- */
-
-    if (visitor.status === "PENDING") {
-
-        showInvalidVisitor(
-            "This visitor has not been approved by the host."
+        console.error(
+            "Verification error:",
+            error
         );
 
-        return;
-    }
 
-
-    if (visitor.status === "REJECTED") {
-
-        showInvalidVisitor(
-            "This visit request was rejected by the host."
+        alert(
+            "Unable to connect to Flask server."
         );
 
-        return;
     }
 
-
-    if (visitor.status === "COMPLETED") {
-
-        showInvalidVisitor(
-            "This visitor has already checked out."
-        );
-
-        return;
-    }
-
-
-    if (visitor.status === "CHECKED_IN") {
-
-        showCheckedInDetails(visitor);
-
-        return;
-    }
-
-
-    if (visitor.status === "APPROVED") {
-
-        localStorage.setItem(
-            "visitorData",
-            JSON.stringify(visitor)
-        );
-
-        showValidVisitor(visitor);
-
-        return;
-    }
-
-
-    showInvalidVisitor(
-        "Visitor status is not valid for entry."
-    );
 }
-
-
 /* =====================================================
    SHOW APPROVED VISITOR
 ===================================================== */
@@ -713,7 +780,7 @@ function showValidVisitor(visitor) {
 
                 <div>
                     <span>Visitor ID</span>
-                    <strong>${visitor.visitorID}</strong>
+                    <strong>${visitor.visitor_id}</strong>
                 </div>
 
                 <div>
@@ -733,12 +800,12 @@ function showValidVisitor(visitor) {
 
                 <div>
                     <span>Visit Date</span>
-                    <strong>${visitor.visitDate}</strong>
+                    <strong>${visitor.visit_date}</strong>
                 </div>
 
                 <div>
                     <span>Visit Time</span>
-                    <strong>${visitor.visitTime}</strong>
+                    <strong>${visitor.visit_time}</strong>
                 </div>
 
             </div>
@@ -760,7 +827,7 @@ function showValidVisitor(visitor) {
 
             <button
                 class="checkin-btn"
-                onclick="checkInVisitor('${visitor.visitorID}')">
+                onclick="checkInVisitor('${visitor.visitor_id}')">
 
                 ✓ Check In Visitor
 
@@ -771,10 +838,6 @@ function showValidVisitor(visitor) {
     `;
 }
 
-
-/* =====================================================
-   SHOW ALREADY CHECKED-IN VISITOR
-===================================================== */
 
 function showCheckedInDetails(visitor) {
 
@@ -813,22 +876,37 @@ function showCheckedInDetails(visitor) {
 
                 <div>
                     <span>Visitor ID</span>
-                    <strong>${visitor.visitorID}</strong>
+
+                    <strong>
+                        ${visitor.visitor_id}
+                    </strong>
                 </div>
+
 
                 <div>
                     <span>Visitor Name</span>
-                    <strong>${visitor.name}</strong>
+
+                    <strong>
+                        ${visitor.name}
+                    </strong>
                 </div>
+
 
                 <div>
                     <span>Person to Meet</span>
-                    <strong>${visitor.host}</strong>
+
+                    <strong>
+                        ${visitor.host}
+                    </strong>
                 </div>
+
 
                 <div>
                     <span>Check-In Time</span>
-                    <strong>${formatTime(visitor.checkInTime)}</strong>
+
+                    <strong>
+                        ${formatTime(visitor.check_in_time)}
+                    </strong>
                 </div>
 
             </div>
@@ -849,7 +927,7 @@ function showCheckedInDetails(visitor) {
 
             <button
                 class="checkout-btn"
-                onclick="checkOutVisitor('${visitor.visitorID}')">
+                onclick="checkOutVisitor('${visitor.visitor_id}')">
 
                 Check Out Visitor
 
@@ -859,8 +937,6 @@ function showCheckedInDetails(visitor) {
 
     `;
 }
-
-
 /* =====================================================
    INVALID VISITOR
 ===================================================== */
@@ -898,86 +974,79 @@ function showInvalidVisitor(message) {
     `;
 }
 
+async function checkInVisitor(visitorID) {
 
-/* =====================================================
-   CHECK-IN VISITOR
-===================================================== */
+    try {
 
-function checkInVisitor(visitorID) {
-
-    let visitors = getVisitors();
-
-
-    const visitorIndex =
-        visitors.findIndex(function (visitor) {
-
-            return visitor.visitorID === visitorID;
-
-        });
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(visitorID) +
+                "/checkin",
+                {
+                    method: "PUT"
+                }
+            );
 
 
-    if (visitorIndex === -1) {
-
-        alert("Visitor record not found.");
-
-        return;
-    }
+        const result =
+            await response.json();
 
 
-    if (
-        visitors[visitorIndex].status !==
-        "APPROVED"
-    ) {
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            alert(
+                result.message ||
+                "Unable to check in visitor."
+            );
+
+            return;
+
+        }
+
 
         alert(
-            "This visitor cannot be checked in."
+            "✓ VISITOR CHECKED IN\n\n" +
+            "Visitor has successfully entered the campus."
         );
 
-        return;
+
+        /*
+         * Reload visitor information from SQLite
+         */
+
+        await loadSecurityDashboard();
+
+
+        document.getElementById(
+            "verificationResult"
+        ).innerHTML = "";
+
     }
 
+    catch (error) {
 
-    visitors[visitorIndex].status =
-        "CHECKED_IN";
-
-
-    visitors[visitorIndex].checkInTime =
-        new Date().toISOString();
-
-
-    saveVisitors(visitors);
+        console.error(
+            "Check-in error:",
+            error
+        );
 
 
-    localStorage.setItem(
-        "visitorData",
-        JSON.stringify(
-            visitors[visitorIndex]
-        )
-    );
+        alert(
+            "Unable to connect to Flask server."
+        );
 
+    }
 
-    alert(
-        "✓ VISITOR CHECKED IN\n\n" +
-        visitors[visitorIndex].name +
-        " has successfully entered the campus."
-    );
-
-
-    updateSecurityStats();
-
-    displayCurrentVisitors();
-
-    showCheckedInDetails(
-        visitors[visitorIndex]
-    );
 }
-
-
 /* =====================================================
    DISPLAY CURRENT VISITORS
 ===================================================== */
 
-function displayCurrentVisitors() {
+async function displayCurrentVisitors() {
 
     const container =
         document.getElementById(
@@ -985,7 +1054,7 @@ function displayCurrentVisitors() {
         );
 
 
-    const visitors = getVisitors();
+    const visitors = await getVisitors();
 
 
     const currentVisitors =
@@ -1045,7 +1114,7 @@ function displayCurrentVisitors() {
                         </p>
 
                         <small>
-                            ID: ${visitor.visitorID}
+                            ID: ${visitor.visitor_id}
                         </small>
 
                     </div>
@@ -1058,7 +1127,7 @@ function displayCurrentVisitors() {
                         </span>
 
                         <strong>
-                            ${formatTime(visitor.checkInTime)}
+                            ${formatTime(visitor.check_in_time)}
                         </strong>
 
                     </div>
@@ -1066,7 +1135,7 @@ function displayCurrentVisitors() {
 
                     <button
                         class="checkout-btn"
-                        onclick="checkOutVisitor('${visitor.visitorID}')">
+                        onclick="checkOutVisitor('${visitor.visitor_id}')">
 
                         Check Out
 
@@ -1079,95 +1148,70 @@ function displayCurrentVisitors() {
         }).join("");
 }
 
+async function checkOutVisitor(visitorID) {
 
-/* =====================================================
-   CHECK-OUT VISITOR
-===================================================== */
+    try {
 
-function checkOutVisitor(visitorID) {
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(visitorID) +
+                "/checkout",
+                {
+                    method: "PUT"
+                }
+            );
 
-    let visitors = getVisitors();
+        const result =
+            await response.json();
 
+        if (
+            !response.ok ||
+            !result.success
+        ) {
 
-    const visitorIndex =
-        visitors.findIndex(function (visitor) {
+            alert(
+                result.message ||
+                "Unable to check out visitor."
+            );
 
-            return visitor.visitorID === visitorID;
+            return;
+        }
 
-        });
+        alert(
+            "✓ VISITOR CHECKED OUT\n\n" +
+            "Visitor has successfully left the campus."
+        );
 
+        await loadSecurityDashboard();
 
-    if (visitorIndex === -1) {
+        document.getElementById(
+            "verificationResult"
+        ).innerHTML = "";
 
-        alert("Visitor record not found.");
-
-        return;
     }
 
+    catch (error) {
 
-    visitors[visitorIndex].status =
-        "COMPLETED";
+        console.error(
+            "Check-out error:",
+            error
+        );
 
+        alert(
+            "Unable to connect to Flask server."
+        );
 
-    visitors[visitorIndex].checkOutTime =
-        new Date().toISOString();
+    }
 
-
-    saveVisitors(visitors);
-
-
-    localStorage.setItem(
-        "visitorData",
-        JSON.stringify(
-            visitors[visitorIndex]
-        )
-    );
-
-
-    alert(
-        "✓ VISITOR CHECKED OUT\n\n" +
-        visitors[visitorIndex].name +
-        " has exited the campus."
-    );
-
-
-    updateSecurityStats();
-
-    displayCurrentVisitors();
-
-
-    document.getElementById(
-        "verificationResult"
-    ).innerHTML = `
-
-        <div class="result-placeholder">
-
-            <div>
-                ✓
-            </div>
-
-            <h3>
-                Visitor Checked Out
-            </h3>
-
-            <p>
-                ${visitors[visitorIndex].name}
-                has successfully exited the campus.
-            </p>
-
-        </div>
-
-    `;
 }
-
-
 /* =====================================================
    SECURITY STATISTICS
 ===================================================== */
 
-function updateSecurityStats() {
+async function updateSecurityStats() {
 
-    const visitors = getVisitors();
+    const visitors = await getVisitors();
 
 
     const today = new Date()
@@ -1184,7 +1228,7 @@ function updateSecurityStats() {
     visitors.forEach(function (visitor) {
 
         if (
-            visitor.visitDate &&
+            visitor.visit_date &&
             new Date(visitor.visitDate)
                 .toISOString()
                 .split("T")[0] === today
@@ -1471,8 +1515,7 @@ function securityLogout() {
 </script>
 
 <script src="js/theme.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+
 </body>
 
 </html>

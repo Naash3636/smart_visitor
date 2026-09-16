@@ -470,254 +470,305 @@ document.addEventListener(
 
 
 
-/* =====================================================
-   LOAD DASHBOARD
-===================================================== */
+async function loadHostDashboard() {
 
-function loadHostDashboard() {
+    try {
 
-    /* ==========================================
-       GET ALL VISITORS
-    ========================================== */
+        /* ==========================================
+           GET ALL VISITORS FROM SQLITE / FLASK
+        ========================================== */
 
-    const savedData =
-        localStorage.getItem("visitors");
-
-    const visitors =
-        savedData
-            ? JSON.parse(savedData)
-            : [];
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitors"
+            );
 
 
-    /* ==========================================
-       HOST INFORMATION
-    ========================================== */
+        if (!response.ok) {
 
-    const hostName =
-        localStorage.getItem("hostName")
-        || "Dean - Academics";
+            throw new Error(
+                "Server returned " +
+                response.status
+            );
 
-
-    document.getElementById(
-        "hostDisplayName"
-    ).textContent = hostName;
+        }
 
 
-    document.getElementById(
-        "welcomeHost"
-    ).textContent =
-        hostName.replace(
-            " - Academics",
-            ""
+        const visitors =
+            await response.json();
+
+
+        console.log(
+            "Visitors from database:",
+            visitors
         );
 
 
-    /* ==========================================
-       TODAY'S DATE
-    ========================================== */
+        /* ==========================================
+           HOST INFORMATION
+        ========================================== */
 
-    const today =
-        new Date();
+        const hostName =
+            localStorage.getItem("hostName")
+            || "Dean - Academics";
 
 
-    document.getElementById(
-        "todayDate"
-    ).textContent =
-        today.toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            }
+        document.getElementById(
+            "hostDisplayName"
+        ).textContent = hostName;
+
+
+        document.getElementById(
+            "welcomeHost"
+        ).textContent =
+            hostName.replace(
+                " - Academics",
+                ""
+            );
+
+
+        /* ==========================================
+           TODAY'S DATE
+        ========================================== */
+
+        const today =
+            new Date();
+
+
+        document.getElementById(
+            "todayDate"
+        ).textContent =
+            today.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+
+        /* ==========================================
+           FILTER VISITORS
+        ========================================== */
+
+        const pendingVisitors =
+            visitors.filter(
+                visitor =>
+                    visitor.status === "PENDING"
+            );
+
+
+        const approvedVisitors =
+            visitors.filter(
+                visitor =>
+                    visitor.status === "APPROVED"
+                    ||
+                    visitor.status === "CHECKED_IN"
+            );
+
+
+        const todayString =
+            today.toISOString()
+                .split("T")[0];
+
+
+        const todayVisitors =
+            visitors.filter(
+                visitor =>
+                    visitor.visit_date ===
+                    todayString
+            );
+
+
+        const currentVisitors =
+            visitors.filter(
+                visitor =>
+                    visitor.status ===
+                    "CHECKED_IN"
+            );
+
+
+        /* ==========================================
+           UPDATE DASHBOARD STATS
+        ========================================== */
+
+        document.getElementById(
+            "todayVisitors"
+        ).textContent =
+            todayVisitors.length;
+
+
+        document.getElementById(
+            "pendingVisitors"
+        ).textContent =
+            pendingVisitors.length;
+
+
+        document.getElementById(
+            "approvedVisitors"
+        ).textContent =
+            approvedVisitors.length;
+
+
+        document.getElementById(
+            "currentVisitors"
+        ).textContent =
+            currentVisitors.length;
+
+
+        /* ==========================================
+           DISPLAY PENDING REQUESTS
+        ========================================== */
+
+        const requestContainer =
+            document.getElementById(
+                "visitorRequests"
+            );
+
+
+        const requestCount =
+            document.getElementById(
+                "requestCount"
+            );
+
+
+        if (pendingVisitors.length === 0) {
+
+            requestCount.textContent =
+                "No Pending Requests";
+
+
+            requestContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        No Pending Requests
+                    </h3>
+
+                    <p>
+                        There are currently no visitor
+                        requests waiting for approval.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+        else {
+
+            requestCount.textContent =
+                pendingVisitors.length === 1
+                    ? "1 Pending Request"
+                    : pendingVisitors.length +
+                      " Pending Requests";
+
+
+            requestContainer.innerHTML =
+                pendingVisitors
+                    .map(
+                        visitor =>
+                            createVisitorRequestCard(
+                                visitor
+                            )
+                    )
+                    .join("");
+
+        }
+
+
+        /* ==========================================
+           DISPLAY APPROVED VISITORS
+        ========================================== */
+
+        const approvedContainer =
+            document.getElementById(
+                "approvedVisitorsList"
+            );
+
+
+        if (approvedVisitors.length === 0) {
+
+            approvedContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    <h3>
+                        No Approved Visits
+                    </h3>
+
+                    <p>
+                        Approved visitor appointments
+                        will appear here.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+        else {
+
+            approvedContainer.innerHTML =
+                approvedVisitors
+                    .map(
+                        visitor =>
+                            createApprovedVisitorCard(
+                                visitor
+                            )
+                    )
+                    .join("");
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Dashboard loading error:",
+            error
         );
 
 
-    /* ==========================================
-       FILTER VISITORS
-    ========================================== */
-
-    const pendingVisitors =
-        visitors.filter(
-            visitor =>
-                visitor.status === "PENDING"
-        );
-
-
-    const approvedVisitors =
-        visitors.filter(
-            visitor =>
-                visitor.status === "APPROVED"
-                ||
-                visitor.status === "CHECKED_IN"
-        );
-
-
-    const todayString =
-        today.toISOString()
-            .split("T")[0];
-
-
-    const todayVisitors =
-        visitors.filter(
-            visitor =>
-                visitor.visitDate === todayString
-        );
-
-
-    const currentVisitors =
-        visitors.filter(
-            visitor =>
-                visitor.status === "CHECKED_IN"
-        );
-
-
-    /* ==========================================
-       UPDATE DASHBOARD STATS
-    ========================================== */
-
-    document.getElementById(
-        "todayVisitors"
-    ).textContent =
-        todayVisitors.length;
-
-
-    document.getElementById(
-        "pendingVisitors"
-    ).textContent =
-        pendingVisitors.length;
-
-
-    document.getElementById(
-        "approvedVisitors"
-    ).textContent =
-        approvedVisitors.length;
-
-
-    document.getElementById(
-        "currentVisitors"
-    ).textContent =
-        currentVisitors.length;
-
-
-    /* ==========================================
-       DISPLAY PENDING REQUESTS
-    ========================================== */
-
-    const requestContainer =
         document.getElementById(
             "visitorRequests"
-        );
-
-
-    const requestCount =
-        document.getElementById(
-            "requestCount"
-        );
-
-
-    if (pendingVisitors.length === 0) {
-
-        requestCount.textContent =
-            "No Pending Requests";
-
-
-        requestContainer.innerHTML = `
+        ).innerHTML = `
 
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    ✓
+                    ⚠
                 </div>
 
                 <h3>
-                    No Pending Requests
+                    Unable to Load Visitors
                 </h3>
 
                 <p>
-                    There are currently no visitor
-                    requests waiting for approval.
+                    Make sure the Flask backend
+                    is running on port 5000.
                 </p>
 
             </div>
 
         `;
-
-    }
-
-    else {
-
-        requestCount.textContent =
-            pendingVisitors.length === 1
-                ? "1 Pending Request"
-                : pendingVisitors.length +
-                  " Pending Requests";
-
-
-        requestContainer.innerHTML =
-            pendingVisitors
-                .map(
-                    visitor =>
-                        createVisitorRequestCard(
-                            visitor
-                        )
-                )
-                .join("");
-
-    }
-
-
-    /* ==========================================
-       DISPLAY APPROVED VISITORS
-    ========================================== */
-
-    const approvedContainer =
-        document.getElementById(
-            "approvedVisitorsList"
-        );
-
-
-    if (approvedVisitors.length === 0) {
-
-        approvedContainer.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    📋
-                </div>
-
-                <h3>
-                    No Approved Visits
-                </h3>
-
-                <p>
-                    Approved visitor appointments
-                    will appear here.
-                </p>
-
-            </div>
-
-        `;
-
-    }
-
-    else {
-
-        approvedContainer.innerHTML =
-            approvedVisitors
-                .map(
-                    visitor =>
-                        createApprovedVisitorCard(
-                            visitor
-                        )
-                )
-                .join("");
 
     }
 
 }
-
 function createVisitorRequestCard(visitor) {
 
     return `
@@ -741,7 +792,7 @@ function createVisitorRequestCard(visitor) {
 
                     <span>
                         Visitor ID:
-                        ${visitor.visitorID}
+                        ${visitor.visitor_id}
                     </span>
 
                 </div>
@@ -784,7 +835,7 @@ function createVisitorRequestCard(visitor) {
                     </span>
 
                     <strong>
-                        ${visitor.visitDate}
+                        ${visitor.visit_date}
                     </strong>
 
                 </div>
@@ -797,7 +848,7 @@ function createVisitorRequestCard(visitor) {
                     </span>
 
                     <strong>
-                        ${visitor.visitTime}
+                        ${visitor.visit_time}
                     </strong>
 
                 </div>
@@ -822,7 +873,7 @@ function createVisitorRequestCard(visitor) {
 
                 <button
                     class="reject-btn"
-                    onclick="rejectVisitor('${visitor.visitorID}')">
+                    onclick="rejectVisitor('${visitor.visitor_id}')">
 
                     ✕ Reject
 
@@ -831,7 +882,7 @@ function createVisitorRequestCard(visitor) {
 
                 <button
                     class="approve-btn"
-                    onclick="approveVisitor('${visitor.visitorID}')">
+                    onclick="approveVisitor('${visitor.visitor_id}')">
 
                     ✓ Approve
 
@@ -1297,110 +1348,150 @@ function hostLogout() {
 
 }
 
-function approveVisitor(visitorID) {
+async function approveVisitor(visitorID) {
 
-    let visitors =
-        JSON.parse(
-            localStorage.getItem("visitors")
-        ) || [];
+    try {
 
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(visitorID) +
+                "/status",
+                {
+                    method: "PUT",
 
-    visitors =
-        visitors.map(
-            visitor => {
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                if (
-                    visitor.visitorID
-                    === visitorID
-                ) {
-
-                    return {
-
-                        ...visitor,
-
-                        status:
-                            "APPROVED"
-
-                    };
-
+                    body: JSON.stringify({
+                        status: "APPROVED"
+                    })
                 }
+            );
 
-                return visitor;
 
-            }
+        const result =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            alert(
+                result.message ||
+                "Unable to approve visitor."
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "✓ Visitor " +
+            visitorID +
+            " approved successfully."
         );
 
 
-    localStorage.setItem(
-        "visitors",
-        JSON.stringify(visitors)
-    );
+        /*
+         * Reload directly from SQLite
+         */
 
+        loadHostDashboard();
 
-    /*
-     * Keep latest selected visitor
-     */
+    }
 
-    const approved =
-        visitors.find(
-            v =>
-                v.visitorID
-                === visitorID
+    catch (error) {
+
+        console.error(
+            "Approve error:",
+            error
         );
 
 
-    localStorage.setItem(
-        "visitorData",
-        JSON.stringify(approved)
-    );
+        alert(
+            "Unable to connect to Flask server."
+        );
 
-loadHostDashboard();
-    
+    }
 
 }
+async function rejectVisitor(visitorID) {
 
+    try {
 
-function rejectVisitor(visitorID) {
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(visitorID) +
+                "/status",
+                {
+                    method: "PUT",
 
-    let visitors =
-        JSON.parse(
-            localStorage.getItem("visitors")
-        ) || [];
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-
-    visitors =
-        visitors.map(
-            visitor => {
-
-                if (
-                    visitor.visitorID
-                    === visitorID
-                ) {
-
-                    return {
-
-                        ...visitor,
-
-                        status:
-                            "REJECTED"
-
-                    };
-
+                    body: JSON.stringify({
+                        status: "REJECTED"
+                    })
                 }
+            );
 
-                return visitor;
 
-            }
+        const result =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            alert(
+                result.message ||
+                "Unable to reject visitor."
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "Visitor " +
+            visitorID +
+            " rejected."
         );
 
 
-    localStorage.setItem(
-        "visitors",
-        JSON.stringify(visitors)
-    );
+        /*
+         * Reload from SQLite
+         */
+
+        loadHostDashboard();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Reject error:",
+            error
+        );
 
 
-    loadHostDashboard();
+        alert(
+            "Unable to connect to Flask server."
+        );
+
+    }
 
 }
 /* =====================================================
@@ -1563,6 +1654,7 @@ document.addEventListener(
 </script>
 
 <script src="js/theme.js"></script>
+
 
 </body>
 </html>

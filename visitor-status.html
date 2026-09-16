@@ -121,8 +121,8 @@
                 YOUR VISITOR ID
             </span>
 
-            <strong id="pendingVisitorID">
-                -
+            <strong id="visitorID">
+                
             </strong>
 
         </div>
@@ -399,27 +399,57 @@
 
 <script>
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        loadVisitorPass();
+    loadVisitor();
+
+});
+
+
+async function loadVisitor() {
+
+    /*
+     * Get Visitor ID from URL
+     *
+     * Example:
+     * visitor-status.html?visitor_id=VIS2630AABB
+     */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    let visitorID =
+        params.get("visitor_id");
+
+
+    /*
+     * Backup:
+     * Get current visitor ID from localStorage
+     */
+
+    if (!visitorID) {
+
+        visitorID =
+            localStorage.getItem(
+                "currentVisitorID"
+            );
 
     }
-);
 
 
+    console.log(
+        "Visitor ID:",
+        visitorID
+    );
 
-function loadVisitorPass() {
 
-    const savedData =
-        localStorage.getItem("visitorData");
-
-
-    if (!savedData) {
+    if (!visitorID) {
 
         alert(
-            "No visitor information found."
+            "No visitor ID found."
         );
 
         return;
@@ -427,23 +457,145 @@ function loadVisitorPass() {
     }
 
 
-    const visitor =
-        JSON.parse(savedData);
+    try {
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/visitor/" +
+                encodeURIComponent(visitorID)
+            );
 
 
-    /*
-     * Show pending or approved section
-     */
+        const result =
+            await response.json();
 
-    if (visitor.status === "APPROVED") {
 
-        showApprovedPass(visitor);
+        console.log(
+            "Server response:",
+            result
+        );
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            alert(
+                result.message ||
+                "No visitor information found."
+            );
+
+            return;
+
+        }
+
+
+        const visitor =
+            result.visitor;
+
+
+        /*
+         * SHOW VISITOR ID
+         */
+
+        const visitorIDElement =
+            document.getElementById(
+                "visitorID"
+            );
+
+
+        if (visitorIDElement) {
+
+            visitorIDElement.textContent =
+                visitor.visitor_id;
+
+        }
+
+
+        /*
+         * SHOW PENDING
+         */
+
+        if (
+            visitor.status ===
+            "PENDING"
+        ) {
+
+            showPending(visitor);
+
+        }
+
+
+        /*
+         * SHOW APPROVED
+         */
+
+        else if (
+            visitor.status ===
+            "APPROVED"
+        ) {
+
+            showApproved(visitor);
+
+        }
+
+
+        /*
+         * SHOW REJECTED
+         */
+
+        else if (
+            visitor.status ===
+            "REJECTED"
+        ) {
+
+            showRejected(visitor);
+
+        }
+
+
+        /*
+         * CHECKED IN
+         */
+
+        else if (
+            visitor.status ===
+            "CHECKED_IN"
+        ) {
+
+            showCheckedIn(visitor);
+
+        }
+
+
+        /*
+         * COMPLETED
+         */
+
+        else if (
+            visitor.status ===
+            "COMPLETED"
+        ) {
+
+            showCompleted(visitor);
+
+        }
 
     }
 
-    else {
+    catch (error) {
 
-        showPending(visitor);
+        console.error(
+            "Visitor loading error:",
+            error
+        );
+
+
+        alert(
+            "Unable to connect to Flask server.\n\n" +
+            "Make sure python app.py is running."
+        );
 
     }
 
@@ -457,135 +609,209 @@ function loadVisitorPass() {
 
 function showPending(visitor) {
 
-    document.getElementById(
-        "pendingSection"
-    ).style.display = "block";
+    /*
+     * Find your pending section.
+     */
+
+    const pendingSection =
+        document.getElementById(
+            "pendingSection"
+        );
 
 
-    document.getElementById(
-        "passSection"
-    ).style.display = "none";
+    if (pendingSection) {
+
+        pendingSection.style.display =
+            "block";
+
+    }
 
 
-    document.getElementById(
-        "pendingVisitorID"
-    ).textContent =
-        visitor.visitorID;
+    /*
+     * Hide approved pass
+     */
+
+    const passSection =
+        document.getElementById(
+            "passSection"
+        );
+
+
+    if (passSection) {
+
+        passSection.style.display =
+            "none";
+
+    }
+
+
+    /*
+     * Update Visitor ID
+     */
+
+    const idElement =
+        document.getElementById(
+            "visitorID"
+        );
+
+
+    if (idElement) {
+
+        idElement.textContent =
+            visitor.visitor_id;
+
+    }
 
 }
 
 
 
 /* =====================================================
-   APPROVED PASS
+   APPROVED
 ===================================================== */
 
-function showApprovedPass(visitor) {
+function showApproved(visitor) {
 
-    document.getElementById(
-        "pendingSection"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "passSection"
-    ).style.display = "block";
+    console.log(
+        "Visitor approved:",
+        visitor
+    );
 
 
     /*
-     * Visitor information
+     * If your existing page has a pass section,
+     * display it.
      */
 
-    document.getElementById(
-        "passVisitorID"
-    ).textContent =
-        visitor.visitorID;
+    const pendingSection =
+        document.getElementById(
+            "pendingSection"
+        );
 
 
-    document.getElementById(
-        "passName"
-    ).textContent =
-        visitor.name;
+    if (pendingSection) {
+
+        pendingSection.style.display =
+            "none";
+
+    }
 
 
-    document.getElementById(
-        "passHost"
-    ).textContent =
-        visitor.host;
+    const passSection =
+        document.getElementById(
+            "passSection"
+        );
 
 
-    document.getElementById(
-        "passDepartment"
-    ).textContent =
-        visitor.department;
+    if (passSection) {
+
+        passSection.style.display =
+            "block";
+
+    }
 
 
-    document.getElementById(
-        "passPurpose"
-    ).textContent =
-        visitor.purpose;
+    setText(
+        "visitorID",
+        visitor.visitor_id
+    );
 
 
-    document.getElementById(
-        "passDate"
-    ).textContent =
-        formatDate(visitor.visitDate);
+    setText(
+        "passVisitorID",
+        visitor.visitor_id
+    );
 
 
-    document.getElementById(
-        "passTime"
-    ).textContent =
-        formatTime(visitor.visitTime);
+    setText(
+        "passName",
+        visitor.name
+    );
 
 
-    /*
-     * QR CONTENT
-     *
-     * We only put the Visitor ID
-     * and validation information
-     * into the QR.
-     */
-
-    const qrData =
-        JSON.stringify({
-
-            visitorID:
-                visitor.visitorID,
-
-            status:
-                visitor.status,
-
-            visitDate:
-                visitor.visitDate,
-
-            visitTime:
-                visitor.visitTime
-
-        });
+    setText(
+        "passHost",
+        visitor.host
+    );
 
 
-    /*
-     * Generate QR
-     */
+    setText(
+        "passDepartment",
+        visitor.department
+    );
 
-    new QRCode(
-        document.getElementById("qrcode"),
-        {
 
-            text: qrData,
+    setText(
+        "passPurpose",
+        visitor.purpose
+    );
 
-            width: 190,
 
-            height: 190,
+    setText(
+        "passDate",
+        visitor.visit_date
+    );
 
-            colorDark: "#092b63",
 
-            colorLight: "#ffffff",
+    setText(
+        "passTime",
+        visitor.visit_time
+    );
+    /* =====================================================
+    GENERATE QR CODE
+    ===================================================== */
 
-            correctLevel:
-                QRCode.CorrectLevel.H
+    const qrContainer =
+        document.getElementById("qrcode");
 
-        }
+
+    if (qrContainer) {
+
+        /* Clear old QR */
+
+        qrContainer.innerHTML = "";
+
+
+        /* Generate QR using Visitor ID */
+
+        new QRCode(
+            qrContainer,
+            {
+                text: visitor.visitor_id,
+
+                width: 320,
+
+                height: 320,
+
+                colorDark: "#000000",
+
+                colorLight: "#ffffff",
+
+                correctLevel:
+                    QRCode.CorrectLevel.H
+            }
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   REJECTED
+===================================================== */
+
+function showRejected(visitor) {
+
+    alert(
+        "Your visitor request has been rejected."
+    );
+
+
+    setText(
+        "visitorID",
+        visitor.visitor_id
     );
 
 }
@@ -593,112 +819,73 @@ function showApprovedPass(visitor) {
 
 
 /* =====================================================
-   DATE FORMAT
+   CHECKED IN
 ===================================================== */
 
-function formatDate(date) {
+function showCheckedIn(visitor) {
 
-    if (!date) {
-        return "-";
-    }
-
-
-    const parts =
-        date.split("-");
-
-
-    if (parts.length !== 3) {
-        return date;
-    }
-
-
-    return (
-        parts[2] +
-        " " +
-        getMonth(parts[1]) +
-        " " +
-        parts[0]
+    setText(
+        "visitorID",
+        visitor.visitor_id
     );
 
-}
 
-
-function getMonth(month) {
-
-    const months = [
-
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-
-    ];
-
-
-    return months[
-        parseInt(month) - 1
-    ];
+    console.log(
+        "Visitor is checked in."
+    );
 
 }
 
 
 
 /* =====================================================
-   TIME FORMAT
+   COMPLETED
 ===================================================== */
 
-function formatTime(time) {
+function showCompleted(visitor) {
 
-    if (!time) {
-        return "-";
-    }
-
-
-    const parts =
-        time.split(":");
-
-
-    let hour =
-        parseInt(parts[0]);
-
-
-    const minute =
-        parts[1];
-
-
-    const period =
-        hour >= 12
-            ? "PM"
-            : "AM";
-
-
-    hour =
-        hour % 12 || 12;
-
-
-    return (
-        hour +
-        ":" +
-        minute +
-        " " +
-        period
+    setText(
+        "visitorID",
+        visitor.visitor_id
     );
+
+
+    console.log(
+        "Visitor visit completed."
+    );
+
+}
+
+
+
+/* =====================================================
+   HELPER
+===================================================== */
+
+function setText(
+    elementID,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            elementID
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            value || "-";
+
+    }
 
 }
 
 </script>
 
 <script src="js/theme.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+
 
 </body>
 </html>

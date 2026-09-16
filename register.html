@@ -533,15 +533,26 @@
 
    <script>
 
-    document.getElementById("visitorForm").addEventListener(
+document.addEventListener("DOMContentLoaded", function () {
+
+    const visitorForm =
+        document.getElementById("visitorForm");
+
+
+    if (!visitorForm) {
+        return;
+    }
+
+
+    visitorForm.addEventListener(
         "submit",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
 
             /* ================================
-            GET FORM VALUES
+               GET FORM VALUES
             ================================= */
 
             const name =
@@ -550,11 +561,13 @@
                     .value
                     .trim();
 
+
             const email =
                 document
                     .getElementById("visitorEmail")
                     .value
                     .trim();
+
 
             const phone =
                 document
@@ -562,10 +575,12 @@
                     .value
                     .trim();
 
+
             const idType =
                 document
                     .getElementById("idType")
                     .value;
+
 
             const idNumber =
                 document
@@ -573,15 +588,18 @@
                     .value
                     .trim();
 
+
             const host =
                 document
                     .getElementById("host")
                     .value;
 
+
             const department =
                 document
                     .getElementById("department")
                     .value;
+
 
             const purpose =
                 document
@@ -589,15 +607,18 @@
                     .value
                     .trim();
 
+
             const visitDate =
                 document
                     .getElementById("visitDate")
                     .value;
 
+
             const visitTime =
                 document
                     .getElementById("visitTime")
                     .value;
+
 
             const terms =
                 document
@@ -606,7 +627,7 @@
 
 
             /* ================================
-            CONFIRMATION
+               CONFIRMATION
             ================================= */
 
             if (!terms) {
@@ -620,130 +641,141 @@
 
 
             /* ================================
-            GENERATE VISITOR ID
+               SEND TO FLASK + SQLITE
             ================================= */
 
-            function generateVisitorID() {
+            try {
 
-                const timestamp =
-                    Date.now()
-                        .toString()
-                        .slice(-6);
+                const response = await fetch(
+                    "http://127.0.0.1:5000/api/register",
+                    {
 
-                return "VIS" + timestamp;
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            name: name,
+
+                            email: email,
+
+                            phone: phone,
+
+                            idType: idType,
+
+                            idNumber: idNumber,
+
+                            host: host,
+
+                            department: department,
+
+                            purpose: purpose,
+
+                            visitDate: visitDate,
+
+                            visitTime: visitTime
+
+                        })
+
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                /* ================================
+                   CHECK RESULT
+                ================================= */
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    alert(
+                        "Registration failed.\n\n" +
+                        (
+                            result.message ||
+                            "Please try again."
+                        )
+                    );
+
+                    return;
+                }
+
+
+                /* ================================
+                   SAVE ONLY CURRENT ID LOCALLY
+                ================================= */
+
+                localStorage.setItem(
+                    "currentVisitorID",
+                    result.visitor_id
+                );
+
+
+                /* ================================
+                   SUCCESS
+                ================================= */
+
+                alert(
+
+                    "✓ VISIT REQUEST SUBMITTED SUCCESSFULLY!\n\n" +
+
+                    "Visitor ID: " +
+                    result.visitor_id +
+
+                    "\n\n" +
+
+                    "Status: PENDING APPROVAL"
+
+                );
+
+
+                /* ================================
+                   STATUS PAGE
+                ================================= */
+
+                window.location.href =
+                    "visitor-status.html?visitor_id=" +
+                    encodeURIComponent(
+                        result.visitor_id
+                    );
 
             }
 
+            catch (error) {
 
-            const visitorID =
-                generateVisitorID();
-
-
-            /* ================================
-            CREATE VISITOR OBJECT
-            ================================= */
-
-            const visitor = {
-
-                visitorID: visitorID,
-
-                name: name,
-
-                email: email,
-
-                phone: phone,
-
-                idType: idType,
-
-                idNumber: idNumber,
-
-                host: host,
-
-                department: department,
-
-                purpose: purpose,
-
-                visitDate: visitDate,
-
-                visitTime: visitTime,
-
-                status: "PENDING",
-
-                createdAt:
-                    new Date().toISOString()
-
-            };
+                console.error(
+                    "Registration Error:",
+                    error
+                );
 
 
-            /* ================================
-            GET EXISTING VISITORS
-            ================================= */
+                alert(
 
-            let visitors =
-                JSON.parse(
-                    localStorage.getItem("visitors")
-                ) || [];
+                    "Unable to connect to the server.\n\n" +
 
+                    "Please make sure the Flask backend is running."
 
-            /* ================================
-            ADD NEW VISITOR
-            ================================= */
+                );
 
-            visitors.push(visitor);
-
-
-            /* ================================
-            SAVE ALL VISITORS
-            ================================= */
-
-            localStorage.setItem(
-                "visitors",
-                JSON.stringify(visitors)
-            );
-
-
-            /* ================================
-            SAVE CURRENT VISITOR
-            ================================= */
-
-            localStorage.setItem(
-                "visitorData",
-                JSON.stringify(visitor)
-            );
-
-
-            /* ================================
-            SUCCESS MESSAGE
-            ================================= */
-
-            alert(
-                "VISIT REQUEST SUBMITTED SUCCESSFULLY!\n\n" +
-
-                "Visitor ID: " +
-                visitorID +
-
-                "\n\n" +
-
-                "Status: PENDING APPROVAL"
-            );
-
-
-            /* ================================
-            OPEN STATUS PAGE
-            ================================= */
-
-            window.location.href =
-                "visitor-status.html";
+            }
 
         }
-
     );
+
+});
 
 </script>
 
 <script src="js/theme.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
 
 </body>
 </html>

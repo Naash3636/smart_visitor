@@ -2750,48 +2750,33 @@ a {
 
 
 .real-qr {
+    width: 320px;
+    height: 320px;
 
-    width: 210px;
-
-    height: 210px;
-
-    padding: 10px;
-
-    margin: auto;
+    margin: 25px auto 20px auto;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid #dce4ee;
+    border-radius: 12px;
 
-    border-radius: 8px;
+    overflow: hidden;
 
+    position: relative;
+
+    z-index: 1;
 }
 
-
-.real-qr img {
+.real-qr img,
+.real-qr canvas {
+    width: 280px !important;
+    height: 280px !important;
 
     display: block;
-
 }
-
-
-.qr-section p {
-
-    margin-top: 12px;
-
-    color: #7b889a;
-
-    font-size: 11px;
-
-}
-
-
 /* VISITOR ID */
 
 .pass-id {

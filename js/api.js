@@ -1,1 +1,1 @@
-window.API_URL = "https://occur-influences-bears-beginning.trycloudflare.com ";
+window.API_URL = "https://warrant-identifier-weekly-edinburgh.trycloudflare.com";

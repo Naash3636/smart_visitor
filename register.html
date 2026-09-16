@@ -647,40 +647,26 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
 
                 const response = await fetch(
-                    "http://127.0.0.1:5000/api/register",
+                    `${API_URL}/api/register`,
                     {
-
                         method: "POST",
 
                         headers: {
-                            "Content-Type":
-                                "application/json"
+                            "Content-Type": "application/json"
                         },
 
                         body: JSON.stringify({
-
                             name: name,
-
                             email: email,
-
                             phone: phone,
-
                             idType: idType,
-
                             idNumber: idNumber,
-
                             host: host,
-
                             department: department,
-
                             purpose: purpose,
-
                             visitDate: visitDate,
-
                             visitTime: visitTime
-
                         })
-
                     }
                 );
 
@@ -708,16 +694,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     return;
                 }
-
-
-                /* ================================
-                   SAVE ONLY CURRENT ID LOCALLY
-                ================================= */
-
-                localStorage.setItem(
-                    "currentVisitorID",
-                    result.visitor_id
-                );
 
 
                 /* ================================

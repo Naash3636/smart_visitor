@@ -558,22 +558,28 @@ async function loadSecurityDashboard() {
    GET ALL VISITORS
 ===================================================== */
 
+const API_URL = "https://docs-spent-updated-bras.trycloudflare.com";
+
 async function getVisitors() {
-
-    const response = await fetch(
-        "http://127.0.0.1:5000/api/visitors"
-    );
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Unable to load visitors"
+    try {
+        const response = await fetch(
+            `${API_URL}/api/visitors`
         );
 
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        return await response.json();
+
+    } catch (error) {
+
+        console.error("GET VISITORS ERROR:", error);
+
+        alert("Unable to connect to Flask server.");
+
+        return [];
     }
-
-    return await response.json();
-
 }
 async function verifyVisitor() {
 
@@ -583,161 +589,101 @@ async function verifyVisitor() {
         .trim()
         .toUpperCase();
 
-
     if (!search) {
-
-        alert(
-            "Please enter a Visitor ID."
-        );
-
+        alert("Please enter a Visitor ID.");
         return;
-
     }
-
 
     try {
 
-        /*
-         * GET VISITOR DIRECTLY FROM SQLITE
-         */
-
-        const response =
-            await fetch(
-                "http://127.0.0.1:5000/api/visitor/" +
-                encodeURIComponent(search)
-            );
-
-
-        if (!response.ok) {
-
-            showInvalidVisitor(
-                "Visitor ID not found."
-            );
-
-            return;
-
-        }
-
-
-        const result =
-            await response.json();
-
-
-        const visitor =
-            result.visitor || result;
-
-
-        if (!visitor) {
-
-            showInvalidVisitor(
-                "Visitor ID not found."
-            );
-
-            return;
-
-        }
-
-
-        console.log(
-            "Visitor from SQL:",
-            visitor
+        const response = await fetch(
+            `${API_URL}/api/visitor/${encodeURIComponent(search)}`
         );
 
+        const data = await response.json();
 
-        /*
-         * CHECK STATUS
-         */
+        if (!response.ok || !data.success) {
 
-        if (
-            visitor.status ===
-            "PENDING"
-        ) {
+            showInvalidVisitor(
+                "Visitor ID not found."
+            );
+
+            return;
+        }
+
+        const visitor = data.visitor;
+
+        // Flask names → frontend names
+        const frontendVisitor = {
+            visitorID: visitor.visitor_id,
+            name: visitor.name,
+            email: visitor.email,
+            phone: visitor.phone,
+            idType: visitor.id_type,
+            idNumber: visitor.id_number,
+            host: visitor.host,
+            department: visitor.department,
+            purpose: visitor.purpose,
+            visitDate: visitor.visit_date,
+            visitTime: visitor.visit_time,
+            status: visitor.status,
+            checkInTime: visitor.check_in_time,
+            checkOutTime: visitor.check_out_time
+        };
+
+        if (frontendVisitor.status === "PENDING") {
 
             showInvalidVisitor(
                 "This visitor has not been approved by the host."
             );
 
             return;
-
         }
 
-
-        if (
-            visitor.status ===
-            "REJECTED"
-        ) {
+        if (frontendVisitor.status === "REJECTED") {
 
             showInvalidVisitor(
                 "This visit request was rejected by the host."
             );
 
             return;
-
         }
 
-
-        if (
-            visitor.status ===
-            "COMPLETED"
-        ) {
+        if (frontendVisitor.status === "COMPLETED") {
 
             showInvalidVisitor(
                 "This visitor has already checked out."
             );
 
             return;
-
         }
 
+        if (frontendVisitor.status === "CHECKED_IN") {
 
-        if (
-            visitor.status ===
-            "CHECKED_IN"
-        ) {
-
-            showCheckedInDetails(
-                visitor
-            );
+            showCheckedInDetails(frontendVisitor);
 
             return;
-
         }
 
+        if (frontendVisitor.status === "APPROVED") {
 
-        if (
-            visitor.status ===
-            "APPROVED"
-        ) {
-
-            showValidVisitor(
-                visitor
-            );
+            showValidVisitor(frontendVisitor);
 
             return;
-
         }
-
 
         showInvalidVisitor(
-            "Visitor status is not valid for entry."
+            "Visitor status is not valid."
         );
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
-        console.error(
-            "Verification error:",
-            error
-        );
-
+        console.error("VERIFY ERROR:", error);
 
         alert(
             "Unable to connect to Flask server."
         );
-
     }
-
 }
 /* =====================================================
    SHOW APPROVED VISITOR
@@ -978,69 +924,48 @@ async function checkInVisitor(visitorID) {
 
     try {
 
-        const response =
-            await fetch(
-                "http://127.0.0.1:5000/api/visitor/" +
-                encodeURIComponent(visitorID) +
-                "/checkin",
-                {
-                    method: "PUT"
-                }
-            );
+        const response = await fetch(
+            `${API_URL}/api/visitor/${encodeURIComponent(visitorID)}/checkin`,
+            {
+                method: "PUT"
+            }
+        );
 
+        const data = await response.json();
 
-        const result =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !result.success
-        ) {
+        if (!response.ok || !data.success) {
 
             alert(
-                result.message ||
+                data.message ||
                 "Unable to check in visitor."
             );
 
             return;
-
         }
-
 
         alert(
             "✓ VISITOR CHECKED IN\n\n" +
-            "Visitor has successfully entered the campus."
+            visitorID +
+            " has successfully entered the campus."
         );
 
+        loadSecurityDashboard();
 
-        /*
-         * Reload visitor information from SQLite
-         */
-
-        await loadSecurityDashboard();
-
-
+        // Verify again so the right-side panel updates
         document.getElementById(
-            "verificationResult"
-        ).innerHTML = "";
+            "visitorSearch"
+        ).value = visitorID;
 
-    }
+        await verifyVisitor();
 
-    catch (error) {
+    } catch (error) {
 
-        console.error(
-            "Check-in error:",
-            error
-        );
-
+        console.error("CHECK-IN ERROR:", error);
 
         alert(
             "Unable to connect to Flask server."
         );
-
     }
-
 }
 /* =====================================================
    DISPLAY CURRENT VISITORS
@@ -1152,26 +1077,19 @@ async function checkOutVisitor(visitorID) {
 
     try {
 
-        const response =
-            await fetch(
-                "http://127.0.0.1:5000/api/visitor/" +
-                encodeURIComponent(visitorID) +
-                "/checkout",
-                {
-                    method: "PUT"
-                }
-            );
+        const response = await fetch(
+            `${API_URL}/api/visitor/${encodeURIComponent(visitorID)}/checkout`,
+            {
+                method: "PUT"
+            }
+        );
 
-        const result =
-            await response.json();
+        const data = await response.json();
 
-        if (
-            !response.ok ||
-            !result.success
-        ) {
+        if (!response.ok || !data.success) {
 
             alert(
-                result.message ||
+                data.message ||
                 "Unable to check out visitor."
             );
 
@@ -1180,30 +1098,39 @@ async function checkOutVisitor(visitorID) {
 
         alert(
             "✓ VISITOR CHECKED OUT\n\n" +
-            "Visitor has successfully left the campus."
+            visitorID +
+            " has successfully exited the campus."
         );
 
-        await loadSecurityDashboard();
+        loadSecurityDashboard();
 
         document.getElementById(
             "verificationResult"
-        ).innerHTML = "";
+        ).innerHTML = `
+            <div class="result-placeholder">
 
-    }
+                <div>✓</div>
 
-    catch (error) {
+                <h3>
+                    Visitor Checked Out
+                </h3>
 
-        console.error(
-            "Check-out error:",
-            error
-        );
+                <p>
+                    Visitor ${visitorID}
+                    has successfully exited the campus.
+                </p>
+
+            </div>
+        `;
+
+    } catch (error) {
+
+        console.error("CHECK-OUT ERROR:", error);
 
         alert(
             "Unable to connect to Flask server."
         );
-
     }
-
 }
 /* =====================================================
    SECURITY STATISTICS

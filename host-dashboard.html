@@ -480,7 +480,7 @@ async function loadHostDashboard() {
 
         const response =
             await fetch(
-                "http://127.0.0.1:5000/api/visitors"
+                "https://docs-spent-updated-bras.trycloudflare.com/api/visitors"
             );
 
 
@@ -1352,147 +1352,89 @@ async function approveVisitor(visitorID) {
 
     try {
 
-        const response =
-            await fetch(
-                "http://127.0.0.1:5000/api/visitor/" +
-                encodeURIComponent(visitorID) +
-                "/status",
-                {
-                    method: "PUT",
+        const response = await fetch(
+            `${API_URL}/api/visitor/${encodeURIComponent(visitorID)}/status`,
+            {
+                method: "PUT",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                    body: JSON.stringify({
-                        status: "APPROVED"
-                    })
-                }
-            );
+                body: JSON.stringify({
+                    status: "APPROVED"
+                })
+            }
+        );
 
+        const data = await response.json();
 
-        const result =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !result.success
-        ) {
+        if (!response.ok || !data.success) {
 
             alert(
-                result.message ||
+                data.message ||
                 "Unable to approve visitor."
             );
 
             return;
-
         }
 
-
-        alert(
-            "✓ Visitor " +
-            visitorID +
-            " approved successfully."
-        );
-
-
-        /*
-         * Reload directly from SQLite
-         */
+        alert("✓ Visitor approved successfully.");
 
         loadHostDashboard();
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
-        console.error(
-            "Approve error:",
-            error
-        );
-
+        console.error("APPROVAL ERROR:", error);
 
         alert(
             "Unable to connect to Flask server."
         );
-
     }
-
 }
 async function rejectVisitor(visitorID) {
 
     try {
 
-        const response =
-            await fetch(
-                "http://127.0.0.1:5000/api/visitor/" +
-                encodeURIComponent(visitorID) +
-                "/status",
-                {
-                    method: "PUT",
+        const response = await fetch(
+            `${API_URL}/api/visitor/${encodeURIComponent(visitorID)}/status`,
+            {
+                method: "PUT",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                    body: JSON.stringify({
-                        status: "REJECTED"
-                    })
-                }
-            );
+                body: JSON.stringify({
+                    status: "REJECTED"
+                })
+            }
+        );
 
+        const data = await response.json();
 
-        const result =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !result.success
-        ) {
+        if (!response.ok || !data.success) {
 
             alert(
-                result.message ||
+                data.message ||
                 "Unable to reject visitor."
             );
 
             return;
-
         }
 
-
-        alert(
-            "Visitor " +
-            visitorID +
-            " rejected."
-        );
-
-
-        /*
-         * Reload from SQLite
-         */
+        alert("Visitor rejected.");
 
         loadHostDashboard();
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
-        console.error(
-            "Reject error:",
-            error
-        );
-
+        console.error("REJECT ERROR:", error);
 
         alert(
             "Unable to connect to Flask server."
         );
-
     }
-
 }
 /* =====================================================
    DARK / LIGHT MODE

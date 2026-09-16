@@ -352,105 +352,73 @@ def update_status(visitor_id):
     "/api/visitor/<visitor_id>/checkin",
     methods=["PUT"]
 )
+@app.route(
+    "/api/visitor/<visitor_id>/checkin",
+    methods=["PUT"]
+)
 def check_in(visitor_id):
 
     try:
 
         conn = get_db()
 
-
         visitor = conn.execute("""
             SELECT status
             FROM visitors
             WHERE visitor_id = ?
         """, (
-
             visitor_id,
-
         )).fetchone()
-
 
         if visitor is None:
 
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
-                "message":
-                    "Visitor not found."
-
+                "message": "Visitor not found."
             }), 404
-
 
         if visitor["status"] != "APPROVED":
 
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
-                "message":
-                    "Visitor is not approved."
-
+                "message": "Visitor is not approved."
             }), 400
 
-
-        check_in_time =datetime.now().isoformat()
-
+        check_in_time = datetime.now().isoformat()
 
         conn.execute("""
             UPDATE visitors
-
             SET
                 status = 'CHECKED_IN',
                 check_in_time = ?
-
             WHERE visitor_id = ?
         """, (
-
             check_in_time,
-
             visitor_id
-
         ))
 
-
         conn.commit()
-
         conn.close()
 
-
         return jsonify({
-
             "success": True,
-
-            "visitor_id":
-                visitor_id,
-
-            "status":
-                "CHECKED_IN",
-
-            "check_in_time":
-                check_in_time
-
+            "visitor_id": visitor_id,
+            "status": "CHECKED_IN",
+            "check_in_time": check_in_time
         })
-
 
     except Exception as e:
 
         print("CHECK-IN ERROR:", e)
 
         return jsonify({
-
             "success": False,
-
             "message": str(e)
-
         }), 500
-
 
 # =====================================================
 # CHECK OUT

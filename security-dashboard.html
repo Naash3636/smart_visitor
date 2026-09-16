@@ -558,7 +558,7 @@ async function loadSecurityDashboard() {
    GET ALL VISITORS
 ===================================================== */
 
-const API_URL = "https://docs-spent-updated-bras.trycloudflare.com";
+
 
 async function getVisitors() {
     try {
@@ -583,8 +583,8 @@ async function getVisitors() {
 }
 async function verifyVisitor() {
 
-    const search =
-        document.getElementById("visitorSearch")
+    const search = document
+        .getElementById("visitorSearch")
         .value
         .trim()
         .toUpperCase();
@@ -596,42 +596,64 @@ async function verifyVisitor() {
 
     try {
 
-        const response = await fetch(
-            `${API_URL}/api/visitor/${encodeURIComponent(search)}`
-        );
+        const visitors = await getVisitors();
 
-        const data = await response.json();
+        const visitor = visitors.find(function (v) {
 
-        if (!response.ok || !data.success) {
+            const id = v.visitorID || v.visitor_id;
 
-            showInvalidVisitor(
-                "Visitor ID not found."
-            );
+            return id &&
+                   id.toString().toUpperCase() === search;
 
+        });
+
+        if (!visitor) {
+            showInvalidVisitor("Visitor ID not found.");
             return;
         }
 
-        const visitor = data.visitor;
+        /* Convert backend/database field names
+           into the names used by this page */
 
-        // Flask names → frontend names
-        const frontendVisitor = {
-            visitorID: visitor.visitor_id,
-            name: visitor.name,
-            email: visitor.email,
-            phone: visitor.phone,
-            idType: visitor.id_type,
-            idNumber: visitor.id_number,
-            host: visitor.host,
-            department: visitor.department,
-            purpose: visitor.purpose,
-            visitDate: visitor.visit_date,
-            visitTime: visitor.visit_time,
-            status: visitor.status,
-            checkInTime: visitor.check_in_time,
-            checkOutTime: visitor.check_out_time
+        const normalizedVisitor = {
+
+            ...visitor,
+
+            visitorID:
+                visitor.visitorID ||
+                visitor.visitor_id,
+
+            name:
+                visitor.name ||
+                visitor.visitor_name,
+
+            host:
+                visitor.host ||
+                visitor.person_to_meet,
+
+            department:
+                visitor.department,
+
+            visitDate:
+                visitor.visitDate ||
+                visitor.visit_date,
+
+            visitTime:
+                visitor.visitTime ||
+                visitor.preferred_time,
+
+            status:
+                visitor.status
+                ? visitor.status.toUpperCase()
+                : "PENDING",
+
+            checkInTime:
+                visitor.checkInTime ||
+                visitor.check_in_time
+
         };
 
-        if (frontendVisitor.status === "PENDING") {
+        if (normalizedVisitor.status === "PENDING") {
 
             showInvalidVisitor(
                 "This visitor has not been approved by the host."
@@ -640,7 +662,7 @@ async function verifyVisitor() {
             return;
         }
 
-        if (frontendVisitor.status === "REJECTED") {
+        if (normalizedVisitor.status === "REJECTED") {
 
             showInvalidVisitor(
                 "This visit request was rejected by the host."
@@ -649,7 +671,7 @@ async function verifyVisitor() {
             return;
         }
 
-        if (frontendVisitor.status === "COMPLETED") {
+        if (normalizedVisitor.status === "COMPLETED") {
 
             showInvalidVisitor(
                 "This visitor has already checked out."
@@ -658,30 +680,36 @@ async function verifyVisitor() {
             return;
         }
 
-        if (frontendVisitor.status === "CHECKED_IN") {
+        if (normalizedVisitor.status === "CHECKED_IN") {
 
-            showCheckedInDetails(frontendVisitor);
+            showCheckedInDetails(normalizedVisitor);
 
             return;
         }
 
-        if (frontendVisitor.status === "APPROVED") {
+        if (normalizedVisitor.status === "APPROVED") {
 
-            showValidVisitor(frontendVisitor);
+            localStorage.setItem(
+                "visitorData",
+                JSON.stringify(normalizedVisitor)
+            );
+
+            showValidVisitor(normalizedVisitor);
 
             return;
         }
 
         showInvalidVisitor(
-            "Visitor status is not valid."
+            "Visitor status is not valid for entry."
         );
 
     } catch (error) {
 
-        console.error("VERIFY ERROR:", error);
+        console.error("VERIFY VISITOR ERROR:", error);
 
         alert(
-            "Unable to connect to Flask server."
+            "Unable to connect to the server.\n\n" +
+            "Please make sure the Flask backend is running."
         );
     }
 }
@@ -824,7 +852,7 @@ function showCheckedInDetails(visitor) {
                     <span>Visitor ID</span>
 
                     <strong>
-                        ${visitor.visitor_id}
+                        ${visitor.visitorID}
                     </strong>
                 </div>
 
@@ -851,7 +879,7 @@ function showCheckedInDetails(visitor) {
                     <span>Check-In Time</span>
 
                     <strong>
-                        ${formatTime(visitor.check_in_time)}
+                        ${formatTime(visitor.checkInTime)}
                     </strong>
                 </div>
 
@@ -873,7 +901,7 @@ function showCheckedInDetails(visitor) {
 
             <button
                 class="checkout-btn"
-                onclick="checkOutVisitor('${visitor.visitor_id}')">
+                onclick="checkOutVisitor('${visitor.visitorID}')">
 
                 Check Out Visitor
 
@@ -922,6 +950,11 @@ function showInvalidVisitor(message) {
 
 async function checkInVisitor(visitorID) {
 
+    if (!visitorID) {
+        alert("Visitor ID is missing.");
+        return;
+    }
+
     try {
 
         const response = await fetch(
@@ -931,39 +964,39 @@ async function checkInVisitor(visitorID) {
             }
         );
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if (!response.ok || !data.success) {
+        if (!response.ok || !result.success) {
 
-            alert(
-                data.message ||
-                "Unable to check in visitor."
+            throw new Error(
+                result.message ||
+                "Check-in failed"
             );
-
-            return;
         }
 
         alert(
             "✓ VISITOR CHECKED IN\n\n" +
+            "Visitor " +
             visitorID +
             " has successfully entered the campus."
         );
 
-        loadSecurityDashboard();
+        await loadSecurityDashboard();
 
-        // Verify again so the right-side panel updates
-        document.getElementById(
-            "visitorSearch"
-        ).value = visitorID;
-
-        await verifyVisitor();
+        document
+            .getElementById("visitorSearch")
+            .value = visitorID;
 
     } catch (error) {
 
-        console.error("CHECK-IN ERROR:", error);
+        console.error(
+            "CHECK-IN ERROR:",
+            error
+        );
 
         alert(
-            "Unable to connect to Flask server."
+            "Unable to check in visitor.\n\n" +
+            error.message
         );
     }
 }
@@ -1156,13 +1189,9 @@ async function updateSecurityStats() {
 
         if (
             visitor.visit_date &&
-            new Date(visitor.visitDate)
-                .toISOString()
-                .split("T")[0] === today
+            visitor.visit_date === today
         ) {
-
             todayCount++;
-
         }
 
 
@@ -1441,7 +1470,9 @@ function securityLogout() {
 
 </script>
 
+<script src="js/api.js"></script>
 <script src="js/theme.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
 </body>
 

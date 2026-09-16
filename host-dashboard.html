@@ -480,7 +480,7 @@ async function loadHostDashboard() {
 
         const response =
             await fetch(
-                "https://docs-spent-updated-bras.trycloudflare.com/api/visitors"
+                `${API_URL}/api/visitors`
             );
 
 
@@ -1595,6 +1595,7 @@ document.addEventListener(
 );
 </script>
 
+<script src="js/api.js"></script>
 <script src="js/theme.js"></script>
 
 
